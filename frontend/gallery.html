@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<title>Gallery — Hand-Knitted Work | Overberg Wool Co.</title>
+<meta name="description" content="Commissioned and sample hand-knitted pieces: jerseys, shawls, blankets, colourwork and baby knits.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1d1a17">
+<meta name="color-scheme" content="dark">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prata&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">Overberg<small>Wool Co.</small></a>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false">&#9776;</button>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="bespoke.html">Bespoke</a>
+      <a href="about.html">About</a>
+      <a href="bespoke.html" class="btn btn-primary">Request a quote</a>
+    </nav>
+  </div>
+</header>
+<main>
+
+  <section class="page-head">
+    <div class="wrap">
+      <div class="eyebrow">Gallery</div>
+      <h1>Work from the past few seasons</h1>
+      <p class="lede">Commissions, shop samples and one-offs. Nothing here is mass produced, so no two pieces are quite identical — that is rather the point.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div id="gallery" class="skeleton-grid">
+        <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+        <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+      </div>
+      <div style="margin-top:48px;text-align:center">
+        <h3 style="font-size:1.6rem">Something here catch your eye?</h3>
+        <p class="lede" style="margin:0 auto 24px">Most of these can be made again in your size and colours.</p>
+        <a href="bespoke.html" class="btn btn-primary">Request a quote</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">Overberg Wool Co.</div>
+        <p style="max-width:36ch;font-size:.92rem">Natural fibre yarns, well-made knitting tools, and hand-knitted pieces made to order. Based in the Western Cape, shipping across South Africa.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="shop.html">Wool &amp; yarn</a></li>
+          <li><a href="shop.html">Knitting equipment</a></li>
+          <li><a href="shop.html">Finished pieces</a></li>
+          <li><a href="gallery.html">Gallery</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Get in touch</h4>
+        <ul>
+          <li><a href="bespoke.html">Request a quote</a></li>
+          <li><a href="#" data-whatsapp rel="noopener">WhatsApp</a></li>
+          <li><a href="#" data-email="text">email</a></li>
+          <li><a href="about.html">About &amp; visiting</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span id="year"></span> Overberg Wool Co. All rights reserved.</span>
+      <span>Hand-made in South Africa</span>
+    </div>
+  </div>
+</footer>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/sample-data.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+  Site.init({ gallery: { target: 'gallery' } });
+</script>
+</body>
+</html>

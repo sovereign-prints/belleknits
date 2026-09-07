@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<title>Bespoke Commissions — Request a Quote | Overberg Wool Co.</title>
+<meta name="description" content="Have a jersey, shawl, blanket or baby set knitted to your size and colours. Tell us what you have in mind and we will send a quote.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1d1a17">
+<meta name="color-scheme" content="dark">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prata&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">Overberg<small>Wool Co.</small></a>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false">&#9776;</button>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="bespoke.html">Bespoke</a>
+      <a href="about.html">About</a>
+      <a href="bespoke.html" class="btn btn-primary">Request a quote</a>
+    </nav>
+  </div>
+</header>
+<main>
+
+  <section class="page-head">
+    <div class="wrap">
+      <div class="eyebrow">Bespoke</div>
+      <h1>Have something knitted for you</h1>
+      <p class="lede">Fill in as much as you can below. The more you tell us about size, colour and when you need it, the closer the quote will be to the final price.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap layout-aside">
+
+      <div>
+        <div id="quote-status" aria-live="polite"></div>
+
+        <form id="quote-form" class="form-panel" novalidate>
+
+          <h3 style="margin-top:0">Your details</h3>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" autocomplete="name" required>
+            </div>
+            <div class="field">
+              <label for="email">Email address</label>
+              <input type="email" id="email" name="email" autocomplete="email" required>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="phone">Phone / WhatsApp <span class="hint">optional</span></label>
+              <input type="tel" id="phone" name="phone" autocomplete="tel">
+            </div>
+            <div class="field">
+              <label for="town">Town or city <span class="hint">for shipping</span></label>
+              <input type="text" id="town" name="town">
+            </div>
+          </div>
+
+          <h3 style="margin-top:32px">What you would like made</h3>
+
+          <div class="field">
+            <label for="item">Type of piece</label>
+            <select id="item" name="item">
+              <option value="">Please choose…</option>
+              <option>Jersey or cardigan</option>
+              <option>Shawl or wrap</option>
+              <option>Blanket or throw</option>
+              <option>Hat, scarf or mittens</option>
+              <option>Socks</option>
+              <option>Baby or christening set</option>
+              <option>Cushion or homeware</option>
+              <option>Something else</option>
+            </select>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="size">Size <span class="hint">or measurements</span></label>
+              <input type="text" id="size" name="size" placeholder="e.g. ladies M, or 96 cm bust">
+            </div>
+            <div class="field">
+              <label for="colour">Colours you have in mind</label>
+              <input type="text" id="colour" name="colour" placeholder="e.g. natural cream, or sage green">
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="yarn">Preferred yarn <span class="hint">optional</span></label>
+              <select id="yarn" name="yarn">
+                <option value="">No preference — advise me</option>
+                <option>Merino wool</option>
+                <option>Mohair &amp; silk</option>
+                <option>Organic cotton</option>
+                <option>Sock blend (merino / nylon)</option>
+                <option>Chunky roving</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="deadline">Needed by <span class="hint">optional</span></label>
+              <input type="text" id="deadline" name="deadline" placeholder="e.g. mid-December, or no rush">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="budget">Rough budget <span class="hint">optional, but it helps</span></label>
+            <select id="budget" name="budget">
+              <option value="">Prefer not to say</option>
+              <option>Under R500</option>
+              <option>R500 – R1 500</option>
+              <option>R1 500 – R3 000</option>
+              <option>R3 000 – R6 000</option>
+              <option>Over R6 000</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="project">Tell us about the piece</label>
+            <textarea id="project" name="project" required placeholder="What is it for, who is it for, and anything you have seen that is close to what you want. A link to a photo or pattern is very welcome."></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Send my request</button>
+          <p class="form-note">We reply within two working days. Nothing is charged until you have seen and accepted a written quote.</p>
+
+        </form>
+      </div>
+
+      <aside>
+        <div class="form-panel" style="background:var(--sunken)">
+          <h3 style="margin-top:0">How it works</h3>
+          <ol style="padding-left:1.1em;margin:0;font-size:.92rem;color:var(--slate);line-height:1.8">
+            <li>You send this form.</li>
+            <li>We reply with questions, yarn suggestions and a written quote.</li>
+            <li>You accept, and pay half as a deposit.</li>
+            <li>We knit, and send you a photo or two along the way.</li>
+            <li>Balance is settled on completion, then it ships.</li>
+          </ol>
+          <hr style="border:0;border-top:1px solid var(--rule);margin:24px 0">
+          <h3>Typical timings</h3>
+          <p style="font-size:.92rem;color:var(--slate);margin-bottom:0">
+            Hat or socks — 1 to 2 weeks<br>
+            Shawl — 3 to 5 weeks<br>
+            Jersey or cardigan — 6 to 10 weeks<br>
+            Blanket — 6 to 12 weeks
+          </p>
+          <hr style="border:0;border-top:1px solid var(--rule);margin:24px 0">
+          <p style="font-size:.92rem;color:var(--slate);margin-bottom:0">
+            Would rather talk it through?<br>
+            <a href="#" data-whatsapp rel="noopener"><strong>Message us on WhatsApp</strong></a><br>
+            <a href="#" data-email="text"></a>
+          </p>
+        </div>
+      </aside>
+
+    </div>
+  </section>
+
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">Overberg Wool Co.</div>
+        <p style="max-width:36ch;font-size:.92rem">Natural fibre yarns, well-made knitting tools, and hand-knitted pieces made to order. Based in the Western Cape, shipping across South Africa.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="shop.html">Wool &amp; yarn</a></li>
+          <li><a href="shop.html">Knitting equipment</a></li>
+          <li><a href="shop.html">Finished pieces</a></li>
+          <li><a href="gallery.html">Gallery</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Get in touch</h4>
+        <ul>
+          <li><a href="bespoke.html">Request a quote</a></li>
+          <li><a href="#" data-whatsapp rel="noopener">WhatsApp</a></li>
+          <li><a href="#" data-email="text">email</a></li>
+          <li><a href="about.html">About &amp; visiting</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span id="year"></span> Overberg Wool Co. All rights reserved.</span>
+      <span>Hand-made in South Africa</span>
+    </div>
+  </div>
+</footer>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/sample-data.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+  Site.init({ quoteForm: true });
+</script>
+</body>
+</html>

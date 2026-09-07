@@ -1,0 +1,69 @@
+services:
+  # ---------------------------------------------------------------------------
+  # SERVICE 1 — Static Site.
+  # The public website: home, shop, gallery, bespoke quote form, about.
+  # Plain HTML/CSS/JS served from Render's CDN. It holds no secrets and talks
+  # to the web service below over HTTPS. It stays up even when that service
+  # is asleep — backend-dependent data fails gracefully in the browser.
+  # ---------------------------------------------------------------------------
+  - type: web
+    runtime: static
+    name: overberg-wool-site
+    buildCommand: ./build-static.sh
+    staticPublishPath: ./dist
+    autoDeploy: true
+    envVars:
+      # The web service's URL. Rewritten into config.js at build time, e.g.
+      # https://overberg-wool.onrender.com
+      - key: API_HOST
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /404.html
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN
+
+  # ---------------------------------------------------------------------------
+  # SERVICE 2 — Web Service (backend/API).
+  # Owns every database query, authentication, validation and the admin pages.
+  # DATABASE_URL exists here and nowhere else.
+  # ---------------------------------------------------------------------------
+  - type: web
+    name: overberg-wool
+    env: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      # Neon connection string. Paste it into the Render dashboard —
+      # sync:false keeps it out of this file and out of git.
+      - key: DATABASE_URL
+        sync: false
+
+      - key: ADMIN_PASSWORD
+        sync: false
+
+      - key: ADMIN_JWT_SECRET
+        generateValue: true
+
+      # Comma-separated list of origins allowed to call this API from a
+      # browser. Set to the static site's URL once it exists, e.g.
+      # https://overberg-wool-site.onrender.com,https://www.overbergwool.co.za
+      # Never a wildcard.
+      - key: STATIC_SITE_ORIGINS
+        sync: false
