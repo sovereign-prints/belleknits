@@ -186,6 +186,9 @@ body.deck { scroll-snap-type: y mandatory; }
   line-height: 1.05;
   padding: 6px 0;
   letter-spacing: .01em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 .brand small {
   display: block;
@@ -194,6 +197,15 @@ body.deck { scroll-snap-type: y mandatory; }
   letter-spacing: .24em; text-transform: uppercase;
   color: var(--brass);
   margin-top: 3px;
+}
+.brand-mark {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  opacity: .82;
+  mix-blend-mode: luminosity;
+  filter: sepia(.15) saturate(.9);
+  flex: none;
 }
 @media (hover: hover) { .brand:hover { color: var(--ink); } }
 
