@@ -102,9 +102,9 @@ const DEFAULT_GALLERY = [
 ];
 
 const DEFAULT_SETTINGS = {
-  business_name: 'Overberg Wool Co.',
+  business_name: 'Belle Knits',
   tagline: 'Wool, knitting equipment and hand-knitted pieces',
-  email: 'hello@overbergwool.co.za',
+  email: 'hello@belleknits.co.za',
   whatsapp: '27000000000',
   region: 'Western Cape, South Africa',
   free_shipping_over: '1500',

@@ -15,7 +15,7 @@
 (function (window) {
   'use strict';
 
-  var API_HOST = 'https://overberg-wool.onrender.com';
+  var API_HOST = 'https://belleknits-api.onrender.com';
 
   var hostname = window.location.hostname;
   var isLocal = hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '';
@@ -29,7 +29,7 @@
     REQUEST_TIMEOUT_MS: 30000,
 
     WHATSAPP_NUMBER: '27000000000',
-    EMAIL: 'hello@overbergwool.co.za',
+    EMAIL: 'hello@belleknits.co.za',
 
     CURRENCY: 'R'
   };

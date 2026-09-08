@@ -1,4 +1,4 @@
-# Overberg Wool Co.
+# Belle Knits
 
 Wool, knitting equipment and hand-knitted commissions. Natural fibre yarns, tools,
 finished pieces, a bespoke quote workflow and a small admin dashboard.
@@ -94,12 +94,12 @@ to the placeholder catalogue — that is deliberate, not a bug.
 1. **Neon** — create a project, copy the connection string.
 2. **Render → Blueprints → New Blueprint Instance**, pointing at this repo.
    `render.yaml` creates both services.
-3. On the **Web Service** (`overberg-wool`) set:
+3. On the **Web Service** (`belleknits-api`) set:
    - `DATABASE_URL` — the Neon connection string
    - `ADMIN_PASSWORD` — a long password
    - `ADMIN_JWT_SECRET` — Render generates this
-4. On the **Static Site** (`overberg-wool-site`) set:
-   - `API_HOST` — the Web Service's URL, e.g. `https://overberg-wool.onrender.com`
+4. On the **Static Site** (`belleknits`) set:
+   - `API_HOST` — the Web Service's URL, e.g. `https://belleknits-api.onrender.com`
 5. Back on the **Web Service**, set `STATIC_SITE_ORIGINS` to the static site's
    URL (comma-separated if you also have a custom domain).
 6. Redeploy both.
@@ -160,4 +160,4 @@ ignored.
 - Replace the CSS gradient placeholders with real photography.
 - Confirm the real product range and prices — the seed catalogue is a first draft.
 - Set the real WhatsApp number and email in `frontend/assets/js/config.js`.
-- Check that `overbergwool.co.za` is available before committing to the name.
+- Check that `belleknits.co.za` is available before committing to the name.

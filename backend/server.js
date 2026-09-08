@@ -1,5 +1,5 @@
 /* ---------------------------------------------------------------
-   OVERBERG WOOL CO. — API + ADMIN  (Render Web Service)
+   BELLE KNITS — API + ADMIN  (Render Web Service)
 
    The customer-facing site is deployed separately as a Render Static
    Site and calls this service over HTTPS. This service owns:
@@ -571,7 +571,7 @@ app.use((req, res) => res.status(404).json({ error: 'Not found' }));
 
 db.initSchema()
   .then(() => {
-    app.listen(PORT, () => console.log(`Overberg Wool Co. API listening on ${PORT}`));
+    app.listen(PORT, () => console.log(`Belle Knits API listening on ${PORT}`));
   })
   .catch(err => {
     console.error('Failed to initialise the database:', err);

@@ -8,13 +8,13 @@ services:
   # ---------------------------------------------------------------------------
   - type: web
     runtime: static
-    name: overberg-wool-site
+    name: belleknits
     buildCommand: ./build-static.sh
     staticPublishPath: ./dist
     autoDeploy: true
     envVars:
       # The web service's URL. Rewritten into config.js at build time, e.g.
-      # https://overberg-wool.onrender.com
+      # https://belleknits-api.onrender.com
       - key: API_HOST
         sync: false
     routes:
@@ -38,7 +38,7 @@ services:
   # DATABASE_URL exists here and nowhere else.
   # ---------------------------------------------------------------------------
   - type: web
-    name: overberg-wool
+    name: belleknits-api
     env: node
     plan: free
     rootDir: backend
@@ -63,7 +63,7 @@ services:
 
       # Comma-separated list of origins allowed to call this API from a
       # browser. Set to the static site's URL once it exists, e.g.
-      # https://overberg-wool-site.onrender.com,https://www.overbergwool.co.za
+      # https://belleknits.onrender.com,https://www.belleknits.co.za
       # Never a wildcard.
       - key: STATIC_SITE_ORIGINS
         sync: false
