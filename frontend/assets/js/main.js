@@ -99,9 +99,7 @@
     var bar = document.createElement('div');
     bar.className = 'action-bar';
     bar.innerHTML =
-      '<a class="btn btn-primary" href="' + primary.href + '">' + primary.label + '</a>' +
-      '<a class="btn btn-ghost btn-wa" href="' + whatsappLink() + '" rel="noopener" ' +
-        'aria-label="Message us on WhatsApp">Chat</a>';
+      '<a class="btn btn-primary" href="' + primary.href + '">' + primary.label + '</a>';
     document.body.appendChild(bar);
   }
 

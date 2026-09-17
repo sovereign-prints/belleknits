@@ -529,10 +529,7 @@ textarea { min-height: 115px; resize: vertical; }
 .action-bar .btn { margin: 0; font-size: .88rem; padding: 11px 12px; min-height: 42px; }
 .action-bar .btn + .btn { margin-top: 0; }
 .action-bar .btn-wa {
-  flex: 0 0 auto; width: 54px; padding: 11px 0;
-  font-size: .74rem; letter-spacing: .05em;
-  background: var(--sunken); color: var(--ink); border-color: var(--rule);
-  display: flex; align-items: center; justify-content: center;
+  display: none;
 }
 
 body.no-action-bar { padding-bottom: 0; --bar-h: 0px; }
