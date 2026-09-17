@@ -217,6 +217,11 @@ body.deck { scroll-snap-type: y mandatory; }
   color: var(--ink); font-size: 1.45rem; line-height: 1;
   -webkit-tap-highlight-color: transparent;
 }
+/* Swap hamburger for a close icon while the menu is open, so there is
+   always a visible way out rather than relying only on tap-outside. */
+.nav-toggle .icon-close { display: none; }
+.nav-toggle[aria-expanded="true"] .icon-open { display: none; }
+.nav-toggle[aria-expanded="true"] .icon-close { display: inline; }
 
 .nav {
   display: none;
@@ -277,6 +282,18 @@ body.deck { scroll-snap-type: y mandatory; }
 .hero h1 { margin-bottom: .28em; }
 .hero .actions { margin-top: 18px; }
 
+/* On phones the hero panel is one full screen (--panel-h). A 5:4 image
+   plus heading plus lede plus two buttons can overflow that on shorter
+   devices, pushing the CTA below the fold before the user has scrolled
+   at all — so the hero image shrinks to a supporting band instead of
+   dominating the first screen. */
+@media (max-width: 899px) {
+  .hero .figure { aspect-ratio: 16 / 7; }
+}
+@media (max-width: 899px) and (max-height: 720px) {
+  .hero .figure { aspect-ratio: 16 / 6; }
+}
+
 .figure {
   border-radius: var(--radius);
   aspect-ratio: 5 / 4;
@@ -325,9 +342,20 @@ body.deck { scroll-snap-type: y mandatory; }
    FILTERS
    =============================================================== */
 
+.filters-wrap { position: relative; margin: 0 calc(var(--gutter) * -1) 20px; }
+/* Edge fades hint that the pill row scrolls further, since the
+   scrollbar itself is hidden. Faded out once everything fits
+   (desktop, where .filters wraps instead of scrolling). */
+.filters-wrap::before, .filters-wrap::after {
+  content: ''; position: absolute; top: 0; bottom: 10px; width: 28px;
+  pointer-events: none; z-index: 1;
+}
+.filters-wrap::before { left: 0; background: linear-gradient(90deg, var(--ground), transparent); }
+.filters-wrap::after  { right: 0; background: linear-gradient(270deg, var(--ground), transparent); }
+
 .filters {
   display: flex; gap: 8px;
-  margin: 0 calc(var(--gutter) * -1) 20px;
+  margin: 0;
   padding: 2px var(--gutter) 10px;
   overflow-x: auto;
   scroll-snap-type: x proximity;
@@ -614,7 +642,9 @@ body.no-action-bar { padding-bottom: 0; --bar-h: 0px; }
   .cat-figure { margin-bottom: 0; aspect-ratio: 4 / 3; }
 
   .lede { font-size: 1.08rem; }
-  .filters { flex-wrap: wrap; overflow: visible; margin: 0 0 30px; padding: 0; }
+  .filters-wrap { margin: 0 0 30px; }
+  .filters-wrap::before, .filters-wrap::after { display: none; }
+  .filters { flex-wrap: wrap; overflow: visible; margin: 0; padding: 0; }
   .grid, .gallery-grid, .skeleton-grid { gap: 24px; }
   .card { transition: border-color .18s ease, transform .18s ease; }
   .card:hover { border-color: var(--quiet); transform: translateY(-2px); }
