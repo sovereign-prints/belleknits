@@ -26,11 +26,13 @@ window.SITE_SAMPLE = {
     { slug:'cotton-4ply', name:'Organic Cotton 4 Ply', category:'wool',
       price:120, unit:'50g ball', weight:'4 ply / fingering', fibre:'100% organic cotton',
       metreage:'170 m', colour:'Sage',
-      blurb:'Cool and crisp with good stitch definition. Summer tops, dishcloths, market bags.', stock:'in-stock' },
+      blurb:'Cool and crisp with good stitch definition. Summer tops, dishcloths, market bags.', stock:'in-stock',
+      image:'assets/img/products/wool-bamboo-fiber-green.jpg' },
     { slug:'sock-yarn-speckle', name:'Sock Yarn — Speckle', category:'wool',
       price:250, unit:'100g skein', weight:'4 ply / fingering', fibre:'75% merino, 25% nylon',
       metreage:'400 m', colour:'Speckled berry',
-      blurb:'Hard-wearing nylon blend, hand-speckled. Enough for one adult pair.', stock:'in-stock' },
+      blurb:'Hard-wearing nylon blend, hand-speckled. Enough for one adult pair.', stock:'in-stock',
+      image:'assets/img/products/wool-cream-skein.jpg' },
 
     { slug:'bamboo-needle-set', name:'Bamboo Straight Needle Set', category:'equipment',
       price:480, unit:'set of 8 pairs', blurb:'Sizes 3 mm to 8 mm in a cotton roll. Warm in the hand and quiet to work with.', stock:'in-stock' },
@@ -60,14 +62,16 @@ window.SITE_SAMPLE = {
   ],
 
   gallery: [
-    { title:'Aran jersey in undyed merino', note:'Commissioned piece, 2025' },
+    { title:'Aran jersey in undyed merino', note:'Commissioned piece, 2025',
+      image:'assets/img/gallery/gallery-jersey-blue-top.jpg' },
     { title:'Christening shawl', note:'Lace weight mohair silk' },
     { title:'Colourwork yoke cardigan', note:'Six-colour Fair Isle yoke' },
     { title:'Chunky throw', note:'Super chunky roving, 140 × 180 cm' },
     { title:'Matching hat and mitten set', note:'Made to order' },
     { title:'Textured cushion collection', note:'Cable, bobble and moss' },
     { title:'Wedding shawl', note:'Hand-spun silk blend' },
-    { title:'Baby layette', note:'Cardigan, bonnet and booties' },
+    { title:'Baby layette', note:'Cardigan, bonnet and booties',
+      image:'assets/img/gallery/gallery-jersey-blue-folded.jpg' },
     { title:'Fair Isle vest', note:'Traditional Shetland palette' }
   ]
 };

@@ -392,13 +392,15 @@ body.deck { scroll-snap-type: y mandatory; }
   display: flex; flex-direction: column;
 }
 
-.card-figure { aspect-ratio: 1 / 1; background: linear-gradient(150deg, #332e28, #5b4c3b); position: relative; }
+.card-figure { aspect-ratio: 1 / 1; background: linear-gradient(150deg, #332e28, #5b4c3b); position: relative; overflow: hidden; }
 .card-figure::after {
   content: ''; position: absolute; inset: 0;
   background: repeating-linear-gradient(45deg, rgba(255,255,255,.05) 0 8px, rgba(255,255,255,0) 8px 16px);
 }
 .card-figure[data-cat="equipment"] { background: linear-gradient(150deg, #333029, #5c5548); }
 .card-figure[data-cat="finished"]  { background: linear-gradient(150deg, #463434, #6e4f4c); }
+.card-figure img { width: 100%; height: 100%; object-fit: cover; display: block; position: relative; z-index: 1; }
+.card-figure.has-photo::after { display: none; }
 
 .card-body { padding: 11px 11px 13px; display: flex; flex-direction: column; flex: 1; }
 .card-body h3 { font-size: .95rem; margin-bottom: .3em; }
@@ -431,6 +433,7 @@ body.deck { scroll-snap-type: y mandatory; }
 .gallery-figure { aspect-ratio: 3 / 4; background: linear-gradient(160deg, #332e28, #5b4c3b); }
 .gallery-item:nth-child(3n+2) .gallery-figure { background: linear-gradient(160deg, #463434, #6e4f4c); }
 .gallery-item:nth-child(3n+3) .gallery-figure { background: linear-gradient(160deg, #333d33, #4e5e4b); }
+.gallery-figure img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .gallery-cap { padding: 9px 11px 11px; }
 .gallery-cap strong { display: block; font-family: var(--display); font-weight: 400; font-size: .92rem; line-height: 1.25; color: var(--ink); }
 .gallery-cap span { font-size: .7rem; color: var(--quiet); }

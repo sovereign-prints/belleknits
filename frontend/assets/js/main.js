@@ -107,9 +107,13 @@
 
   function productCard(p) {
     var meta = [p.weight, p.fibre, p.unit].filter(Boolean).join(' · ');
+    var figureClass = 'card-figure' + (p.image ? ' has-photo' : '');
+    var figureInner = p.image
+      ? '<img src="' + esc(p.image) + '" alt="' + esc(p.name) + '" loading="lazy">'
+      : '';
     return '' +
       '<article class="card">' +
-        '<div class="card-figure" data-cat="' + esc(p.category) + '"></div>' +
+        '<div class="' + figureClass + '" data-cat="' + esc(p.category) + '">' + figureInner + '</div>' +
         '<div class="card-body">' +
           '<h3>' + esc(p.name) + '</h3>' +
           (meta ? '<div class="card-meta">' + esc(meta) + '</div>' : '') +
@@ -195,9 +199,12 @@
       if (opts.limit) items = items.slice(0, opts.limit);
       container.className = 'gallery-grid';
       container.innerHTML = items.map(function (g) {
+        var figureInner = g.image
+          ? '<img src="' + esc(g.image) + '" alt="' + esc(g.title) + '" loading="lazy">'
+          : '';
         return '' +
           '<figure class="gallery-item">' +
-            '<div class="gallery-figure"></div>' +
+            '<div class="gallery-figure">' + figureInner + '</div>' +
             '<figcaption class="gallery-cap">' +
               '<strong>' + esc(g.title) + '</strong>' +
               '<span>' + esc(g.note || '') + '</span>' +
