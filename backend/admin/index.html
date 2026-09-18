@@ -133,6 +133,7 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
             <div><label for="p-stock">Stock</label>
               <select id="p-stock"><option value="in-stock">In stock</option><option value="low">Low stock</option><option value="made-to-order">Made to order</option><option value="out-of-stock">Out of stock</option></select>
             </div>
+            <div><label for="p-image">Photograph</label><input id="p-image" type="file" accept="image/*"></div>
           </div>
           <p></p>
           <label for="p-blurb">Description</label><textarea id="p-blurb"></textarea>
@@ -295,8 +296,12 @@ async function loadProducts() {
   const rows = await api('/admin/products');
   const STOCK = ['in-stock','low','made-to-order','out-of-stock'];
   $('#products-table').innerHTML =
-    `<thead><tr><th>Name</th><th>Category</th><th class="num">Price</th><th>Stock</th><th>Live</th><th></th></tr></thead><tbody>` +
+    `<thead><tr><th>Image</th><th>Name</th><th>Category</th><th class="num">Price</th><th>Stock</th><th>Live</th><th></th></tr></thead><tbody>` +
     rows.map(p => `<tr>
+      <td>
+        ${p.image ? `<img src="${esc(p.image)}" alt="" style="width:56px;height:56px;object-fit:cover;border-radius:3px;display:block;margin-bottom:6px">` : '<span class="hint" style="display:block;margin-bottom:6px">none</span>'}
+        <input type="file" accept="image/*" data-pimage="${p.id}" style="font-size:.75rem;width:120px">
+      </td>
       <td>${esc(p.name)}<br><span class="hint">${esc(p.slug)}</span></td>
       <td>${esc(p.category)}</td>
       <td class="num"><input style="width:90px" type="number" min="0" step="1" value="${Number(p.price)}" data-price="${p.id}"></td>
@@ -320,16 +325,36 @@ async function loadProducts() {
     try { await api('/admin/products/' + b.dataset.remove, { method: 'DELETE' }); notify('Product removed'); loadProducts(); }
     catch (e) { notify(e.message, false); }
   }));
+  document.querySelectorAll('[data-pimage]').forEach(inp => inp.addEventListener('change', async () => {
+    const file = inp.files[0];
+    if (!file) return;
+    const id = inp.dataset.pimage;
+    try {
+      const fd = new FormData();
+      fd.append('image', file);
+      const uploaded = await api('/admin/upload', { method: 'POST', body: fd });
+      await api('/admin/products/' + id, { method: 'PATCH', body: JSON.stringify({ image: uploaded.url }) });
+      notify('Product photo updated'); loadProducts();
+    } catch (e) { notify(e.message, false); }
+  }));
 }
 
 $('#product-form').addEventListener('submit', async e => {
   e.preventDefault();
   try {
+    let imageUrl = '';
+    const file = $('#p-image').files[0];
+    if (file) {
+      const fd = new FormData();
+      fd.append('image', file);
+      const uploaded = await api('/admin/upload', { method: 'POST', body: fd });
+      imageUrl = uploaded.url;
+    }
     await api('/admin/products', { method: 'POST', body: JSON.stringify({
       name: $('#p-name').value, slug: $('#p-slug').value, category: $('#p-cat').value,
       price: Number($('#p-price').value), unit: $('#p-unit').value, weight: $('#p-weight').value,
       fibre: $('#p-fibre').value, metreage: $('#p-metreage').value, colour: $('#p-colour').value,
-      stock: $('#p-stock').value, blurb: $('#p-blurb').value
+      stock: $('#p-stock').value, blurb: $('#p-blurb').value, image: imageUrl
     })});
     e.target.reset(); notify('Product added'); loadProducts(); loadDash();
   } catch (err) { notify(err.message, false); }
@@ -347,7 +372,10 @@ async function loadGallery() {
   $('#gallery-table').innerHTML =
     `<thead><tr><th>Image</th><th>Title</th><th>Note</th><th>Live</th><th></th></tr></thead><tbody>` +
     rows.map(g => `<tr>
-      <td>${g.image ? `<img src="${esc(g.image)}" alt="" style="width:56px;height:56px;object-fit:cover;border-radius:3px">` : '<span class="hint">none</span>'}</td>
+      <td>
+        ${g.image ? `<img src="${esc(g.image)}" alt="" style="width:56px;height:56px;object-fit:cover;border-radius:3px;display:block;margin-bottom:6px">` : '<span class="hint" style="display:block;margin-bottom:6px">none</span>'}
+        <input type="file" accept="image/*" data-gimage="${g.id}" style="font-size:.75rem;width:120px">
+      </td>
       <td>${esc(g.title)}</td><td>${esc(g.note || '')}</td>
       <td><input type="checkbox" data-gactive="${g.id}"${g.active ? ' checked' : ''}></td>
       <td><button class="ghost danger" data-gremove="${g.id}">Delete</button></td>
@@ -360,6 +388,17 @@ async function loadGallery() {
   document.querySelectorAll('[data-gremove]').forEach(b => b.addEventListener('click', async () => {
     try { await api('/admin/gallery/' + b.dataset.gremove, { method: 'DELETE' }); notify('Deleted'); loadGallery(); }
     catch (e) { notify(e.message, false); }
+  }));
+  document.querySelectorAll('[data-gimage]').forEach(inp => inp.addEventListener('change', async () => {
+    const file = inp.files[0];
+    if (!file) return;
+    const id = inp.dataset.gimage;
+    try {
+      const fd = new FormData();
+      fd.append('image', file);
+      await api('/admin/gallery/' + id, { method: 'PATCH', body: fd });
+      notify('Gallery photo updated'); loadGallery();
+    } catch (e) { notify(e.message, false); }
   }));
 }
 

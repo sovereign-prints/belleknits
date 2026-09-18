@@ -60,8 +60,12 @@ const SESSION_SECRET = JWT_SECRET || 'insecure-dev-secret-do-not-use-in-producti
    the onrender.com address and the custom domain).
 
    Never a wildcard. Requests with no Origin header (curl, server to
-   server, same-origin navigations to the admin pages) are allowed;
-   localhost is allowed so development works without reconfiguring.
+   server) are allowed; localhost is allowed so development works
+   without reconfiguring; and a request whose Origin is THIS service's
+   own origin is always allowed — the admin UI is served same-origin
+   from here, but a browser still sends an Origin header on same-origin
+   fetch/XHR calls, so this check must not depend on STATIC_SITE_ORIGINS
+   listing this service's own address.
    ---------------------------------------------------------------- */
 
 const allowedOrigins = (process.env.STATIC_SITE_ORIGINS || '')
@@ -73,15 +77,25 @@ if (isProduction && allowedOrigins.length === 0) {
   console.warn('WARNING: STATIC_SITE_ORIGINS is not set in production. Every origin will be allowed.');
 }
 
-app.use(cors({
-  origin(origin, callback) {
-    if (!origin) return callback(null, true);
-    const normalized = origin.replace(/\/$/, '');
-    if (allowedOrigins.length === 0) return callback(null, true);
-    if (allowedOrigins.includes(normalized)) return callback(null, true);
-    if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(normalized)) return callback(null, true);
-    return callback(new Error('Not allowed by CORS: ' + origin));
+// cors() accepts a function of (req, callback) for per-request options,
+// which is what lets this check the request's own host below — the
+// simpler (origin, callback) form only sees the Origin header, with no
+// way to compare it against the host the request actually arrived on.
+app.use(cors((req, callback) => {
+  const origin = req.headers.origin;
+
+  function allow(ok) {
+    callback(ok ? null : new Error('Not allowed by CORS: ' + origin), { origin: ok });
   }
+
+  if (!origin) return allow(true);
+  const normalized = origin.replace(/\/$/, '');
+  const ownOrigin = `${req.protocol}://${req.get('host')}`;
+  if (normalized === ownOrigin) return allow(true); // admin UI calling its own same-origin API
+  if (allowedOrigins.length === 0) return allow(true);
+  if (allowedOrigins.includes(normalized)) return allow(true);
+  if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(normalized)) return allow(true);
+  return allow(false);
 }));
 
 app.use(bodyParser.json({ limit: '1mb' }));
