@@ -1,16 +1,12 @@
 /* ---------------------------------------------------------------
    BELLE KNITS — API + ADMIN  (Render Web Service)
 
-   Images are uploaded to Cloudinary (free CDN) instead of being
-   stored in Postgres. This ensures instant image loading even when
-   the backend is cold-starting.
-
    The customer-facing site is deployed separately as a Render Static
    Site and calls this service over HTTPS. This service owns:
      - every database query
      - authentication and authorisation
      - the admin pages, served same-origin so the session cookie works
-     - image upload handling (proxied to Cloudinary)
+     - uploaded images, stored in Postgres
 
    Nothing here is ever shipped to the static site.
    --------------------------------------------------------------- */
@@ -23,18 +19,9 @@ const multer = require('multer');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const path = require('path');
-const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
 require('dotenv').config();
 
 const db = require('./db');
-
-/* ---- Cloudinary Configuration ---- */
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
-});
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -92,26 +79,25 @@ app.use(cookieParser());
 // same-origin. They are NOT part of the static site build.
 app.use('/admin', express.static(path.join(__dirname, 'admin')));
 
-/* ---------------------------------------------------------------- uploads (Cloudinary) */
-
-// Configure multer with Cloudinary storage
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'belle-knits',
-    resource_type: 'auto',
-    allowed_formats: ['jpg', 'png', 'webp', 'gif']
-  }
-});
+/* ---------------------------------------------------------------- uploads */
 
 const upload = multer({
-  storage: storage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 8 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
     cb(allowed.includes(file.mimetype) ? null : new Error('Invalid file type'), allowed.includes(file.mimetype));
   }
 });
+
+async function saveUploadedFile(file) {
+  const id = crypto.randomUUID() + path.extname(file.originalname).toLowerCase();
+  await db.query(
+    'INSERT INTO files (id, filename, mimetype, data) VALUES ($1,$2,$3,$4)',
+    [id, file.originalname, file.mimetype, file.buffer]
+  );
+  return `/uploads/${id}`;
+}
 
 /* ---------------------------------------------------------------- helpers */
 
@@ -150,7 +136,21 @@ function str(v, max = 2000) {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
+// Map of product slugs to their static image paths on the CDN.
+// These load instantly from the static site's assets, not the database.
+const STATIC_PRODUCT_IMAGES = {
+  'cotton-4ply': 'https://belleknits.onrender.com/assets/img/products/wool-bamboo-fiber-green.jpg',
+  'sock-yarn-speckle': 'https://belleknits.onrender.com/assets/img/products/wool-cream-skein.jpg'
+};
+
+// Map of gallery item titles to their static image paths on the CDN.
+const STATIC_GALLERY_IMAGES = {
+  'Aran jersey in undyed merino': 'https://belleknits.onrender.com/assets/img/gallery/gallery-jersey-blue-top.jpg',
+  'Baby layette': 'https://belleknits.onrender.com/assets/img/gallery/gallery-jersey-blue-folded.jpg'
+};
+
 function mapProduct(r) {
+  const image = r.image || STATIC_PRODUCT_IMAGES[r.slug] || null;
   return {
     slug: r.slug,
     name: r.name,
@@ -163,12 +163,13 @@ function mapProduct(r) {
     colour: r.colour || '',
     blurb: r.blurb || '',
     stock: r.stock,
-    image: r.image || null
+    image: image
   };
 }
 
 function mapGallery(r) {
-  return { id: r.id, title: r.title, note: r.note || '', image: r.image || null };
+  const image = r.image || STATIC_GALLERY_IMAGES[r.title] || null;
+  return { id: r.id, title: r.title, note: r.note || '', image: image };
 }
 
 /* ---------------------------------------------------------------- auth */
@@ -269,6 +270,16 @@ app.get('/api/settings', async (req, res) => {
     const { rows } = await db.query('SELECT key, value FROM settings');
     res.json(Object.fromEntries(rows.map(r => [r.key, r.value])));
   } catch (err) { fail(res, 'GET /api/settings', err); }
+});
+
+app.get('/uploads/:id', async (req, res) => {
+  try {
+    const { rows } = await db.query('SELECT * FROM files WHERE id = $1', [req.params.id]);
+    if (!rows.length) return res.status(404).end();
+    res.set('Content-Type', rows[0].mimetype);
+    res.set('Cache-Control', 'public, max-age=31536000, immutable');
+    res.send(rows[0].data);
+  } catch (err) { fail(res, 'GET /uploads/:id', err); }
 });
 
 /* ---------------------------------------------------------------- quotes */
@@ -494,23 +505,18 @@ app.get('/api/admin/gallery', adminAuth, async (req, res) => {
   } catch (err) { fail(res, 'GET /api/admin/gallery', err); }
 });
 
-// Upload image to Cloudinary and return the URL
 app.post('/api/admin/gallery', adminAuth, upload.single('image'), async (req, res) => {
   try {
     const title = str(req.body?.title, 200);
     if (!title) return res.status(400).json({ error: 'A title is required' });
-
-    // req.file.path is the Cloudinary URL when using CloudinaryStorage
-    const imageUrl = req.file ? req.file.path : null;
-
+    const image = req.file ? await saveUploadedFile(req.file) : null;
     const { rows } = await db.query(
       'INSERT INTO gallery (title, note, image, display_order) VALUES ($1,$2,$3,$4) RETURNING *',
-      [title, str(req.body?.note, 400), imageUrl, parseInt(req.body?.display_order, 10) || 0]);
+      [title, str(req.body?.note, 400), image, parseInt(req.body?.display_order, 10) || 0]);
     res.status(201).json(rows[0]);
   } catch (err) { fail(res, 'POST /api/admin/gallery', err); }
 });
 
-// Update gallery item (including image)
 app.patch('/api/admin/gallery/:id', adminAuth, upload.single('image'), async (req, res) => {
   try {
     const b = req.body || {};
@@ -520,7 +526,7 @@ app.patch('/api/admin/gallery/:id', adminAuth, upload.single('image'), async (re
     if (b.note !== undefined) { params.push(str(b.note, 400)); sets.push(`note = $${params.length}`); }
     if (b.active !== undefined) { params.push(b.active === 'false' ? false : Boolean(b.active)); sets.push(`active = $${params.length}`); }
     if (b.display_order !== undefined) { params.push(parseInt(b.display_order, 10) || 0); sets.push(`display_order = $${params.length}`); }
-    if (req.file) { params.push(req.file.path); sets.push(`image = $${params.length}`); }
+    if (req.file) { params.push(await saveUploadedFile(req.file)); sets.push(`image = $${params.length}`); }
     if (!sets.length) return res.status(400).json({ error: 'Nothing to update' });
     params.push(parseInt(req.params.id, 10));
     const { rows } = await db.query(
@@ -538,11 +544,10 @@ app.delete('/api/admin/gallery/:id', adminAuth, async (req, res) => {
   } catch (err) { fail(res, 'DELETE /api/admin/gallery/:id', err); }
 });
 
-// Upload image to Cloudinary and return the URL (for product images)
 app.post('/api/admin/upload', adminAuth, upload.single('image'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No image supplied' });
-    res.status(201).json({ url: req.file.path });
+    res.status(201).json({ url: await saveUploadedFile(req.file) });
   } catch (err) { fail(res, 'POST /api/admin/upload', err); }
 });
 
@@ -571,9 +576,6 @@ app.use((err, req, res, next) => {
   }
   if (err && err.code === 'LIMIT_FILE_SIZE') {
     return res.status(413).json({ error: 'That image is too large. Please use one under 8 MB.' });
-  }
-  if (err && err.message && /invalid file type/i.test(err.message)) {
-    return res.status(415).json({ error: 'That file type is not supported. Please use JPG, PNG, WebP or GIF.' });
   }
   res.status(500).json({ error: FRIENDLY });
 });
