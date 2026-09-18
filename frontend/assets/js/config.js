@@ -31,6 +31,13 @@
     WHATSAPP_NUMBER: '27000000000',
     EMAIL: 'hello@belleknits.co.za',
 
-    CURRENCY: 'R'
+    CURRENCY: 'R',
+
+    // Cold-start fix: browsing (products/gallery/settings) is served from a
+    // build-time snapshot at /data/<name>.json instead of hitting the
+    // (possibly asleep) Web Service on every page load. See build-static.sh.
+    // Only local development, or a production snapshot that is unexpectedly
+    // missing, falls back to a live API call.
+    USE_DATA_SNAPSHOT: !isLocal
   };
 })(window);

@@ -81,25 +81,62 @@
       });
   }
 
+  /* ---------------------------------------------------------------
+     Build-time data snapshot.
+     Cold-start fix: on the production static site, browsing data
+     (products, gallery, settings) is served from a JSON snapshot
+     written into the build by build-static.sh, instead of calling the
+     live (possibly asleep) Web Service on every visit. Falls back to
+     a live API call in local development, or if a snapshot file is
+     unexpectedly missing/invalid in production.
+     --------------------------------------------------------------- */
+  function fetchSnapshot(name) {
+    return window
+      .fetch('/data/' + name + '.json', { credentials: 'omit' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('snapshot ' + name + ' responded ' + res.status);
+        return res.json();
+      })
+      .then(function (data) {
+        return { ok: true, data: data, offline: false };
+      });
+  }
+
+  function fetchData(name, apiPath) {
+    if (!CFG.USE_DATA_SNAPSHOT) return request(apiPath);
+
+    return fetchSnapshot(name).catch(function (err) {
+      console.warn('[api] snapshot ' + name + ' unavailable, falling back to live API:', err && err.message);
+      return request(apiPath);
+    });
+  }
+
   window.SiteAPI = {
     FRIENDLY_MESSAGE: FRIENDLY_MESSAGE,
     FRIENDLY_SUBMIT_MESSAGE: FRIENDLY_SUBMIT_MESSAGE,
 
     getProducts: function (category) {
-      var q = category && category !== 'all' ? '?category=' + encodeURIComponent(category) : '';
-      return request('/products' + q);
+      // Category filtering happens client-side against the full snapshot so
+      // one snapshot file serves every filter, on the shop page and home.
+      return fetchData('products', '/products').then(function (res) {
+        if (res.ok && category && category !== 'all' && Array.isArray(res.data)) {
+          return { ok: true, offline: false, data: res.data.filter(function (p) { return p.category === category; }) };
+        }
+        return res;
+      });
     },
 
     getProduct: function (slug) {
+      // A single-product lookup isn't in the snapshot; always live.
       return request('/products/' + encodeURIComponent(slug));
     },
 
     getGallery: function () {
-      return request('/gallery');
+      return fetchData('gallery', '/gallery');
     },
 
     getSettings: function () {
-      return request('/settings');
+      return fetchData('settings', '/settings');
     },
 
     submitQuote: function (payload) {

@@ -93,6 +93,7 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
     <button data-tab="products" aria-selected="false">Products</button>
     <button data-tab="gallery" aria-selected="false">Gallery</button>
     <button data-tab="settings" aria-selected="false">Settings</button>
+    <button data-tab="website" aria-selected="false">Website</button>
   </nav>
 
   <main class="wrap">
@@ -166,6 +167,16 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
       <div class="panel">
         <form id="settings-form"><div class="row" id="settings-fields"></div><p></p>
           <button class="act" type="submit">Save settings</button></form>
+      </div>
+    </section>
+
+    <section id="website" hidden>
+      <h2>Website</h2>
+      <div class="panel">
+        <p>Changes to products, gallery and business details save to the database <strong>immediately</strong>. But to keep the public website fast &mdash; even when this backend is asleep &mdash; visitors are shown a snapshot of that data, not a live lookup. That snapshot only updates when you publish.</p>
+        <p class="hint">Click <strong>Update website now</strong> after you've finished making changes, so customers see them. This takes a few minutes to rebuild and go live.</p>
+        <p id="publish-status" class="hint"></p>
+        <button class="act" id="publish-btn" type="button">Update website now</button>
       </div>
     </section>
   </main>
@@ -452,6 +463,53 @@ $('#settings-form').addEventListener('submit', async e => {
   catch (err) { notify(err.message, false); }
 });
 
+/* ---- website publish ---- */
+
+function fmtWhen(iso) {
+  return iso ? new Date(iso).toLocaleString('en-ZA', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' }) : '';
+}
+
+async function loadWebsite() {
+  const btn = $('#publish-btn');
+  const status = $('#publish-status');
+  try {
+    const s = await api('/admin/publish');
+    if (!s.configured) {
+      status.textContent = 'Publishing isn’t set up yet on the backend. Ask a developer to add the Render deploy hook.';
+      btn.disabled = true;
+      return;
+    }
+    btn.disabled = false;
+    if (s.lastPublish) {
+      status.textContent = s.lastPublish.ok
+        ? `Last published: ${fmtWhen(s.lastPublish.startedAt)}`
+        : `Last publish attempt failed (${fmtWhen(s.lastPublish.startedAt)}). Try again.`;
+    } else {
+      status.textContent = 'The website hasn’t been published from here yet.';
+    }
+  } catch (e) {
+    status.textContent = '';
+  }
+}
+
+$('#publish-btn').addEventListener('click', async () => {
+  const btn = $('#publish-btn');
+  const status = $('#publish-status');
+  btn.disabled = true;
+  const original = btn.textContent;
+  btn.textContent = 'Starting…';
+  try {
+    const r = await api('/admin/publish', { method: 'POST' });
+    status.textContent = `Publishing started at ${fmtWhen(r.startedAt)} — changes will be live on the website in a few minutes.`;
+    notify('Website update started');
+  } catch (err) {
+    notify(err.message, false);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = original;
+  }
+});
+
 function loadAll() {
   loadDash().catch(() => {});
   loadQuotes().catch(() => {});
@@ -459,6 +517,7 @@ function loadAll() {
   loadProducts().catch(() => {});
   loadGallery().catch(() => {});
   loadSettings().catch(() => {});
+  loadWebsite().catch(() => {});
 }
 
 // Existing session?

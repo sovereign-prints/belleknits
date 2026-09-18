@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "API and admin for Belle Knits — catalogue, gallery, quotes and orders",
   "main": "server.js",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js"

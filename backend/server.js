@@ -584,6 +584,45 @@ app.put('/api/admin/settings', adminAuth, async (req, res) => {
   } catch (err) { fail(res, 'PUT /api/admin/settings', err); }
 });
 
+/* ---------------------------------------------------------------
+   PUBLISH — trigger a rebuild of the static site.
+
+   The public site's products/gallery/settings data is a build-time
+   snapshot (see build-static.sh), so a database edit here does not
+   reach customers until the static site is rebuilt. This endpoint
+   fires the Render Static Site's Deploy Hook to do that on demand.
+
+   RENDER_STATIC_DEPLOY_HOOK is a secret URL and lives only in this
+   service's environment — never in the frontend, never committed.
+   Get it from the Render dashboard: Static Site -> Settings -> Deploy Hook.
+   --------------------------------------------------------------- */
+let lastPublish = null; // { startedAt, ok, error }
+
+app.post('/api/admin/publish', adminAuth, async (req, res) => {
+  const hookUrl = process.env.RENDER_STATIC_DEPLOY_HOOK;
+  if (!hookUrl) {
+    return res.status(501).json({
+      error: 'Publishing isn’t configured yet. Ask a developer to set RENDER_STATIC_DEPLOY_HOOK on the backend service.'
+    });
+  }
+  try {
+    const hookRes = await fetch(hookUrl, { method: 'POST' });
+    lastPublish = { startedAt: new Date().toISOString(), ok: hookRes.ok, error: hookRes.ok ? null : `Deploy hook responded ${hookRes.status}` };
+    if (!hookRes.ok) return res.status(502).json({ error: 'Render did not accept the deploy request. Please try again shortly.' });
+    res.json({ ok: true, startedAt: lastPublish.startedAt });
+  } catch (err) {
+    lastPublish = { startedAt: new Date().toISOString(), ok: false, error: err.message };
+    fail(res, 'POST /api/admin/publish', err);
+  }
+});
+
+app.get('/api/admin/publish', adminAuth, (req, res) => {
+  res.json({
+    configured: Boolean(process.env.RENDER_STATIC_DEPLOY_HOOK),
+    lastPublish
+  });
+});
+
 /* ---------------------------------------------------------------- errors */
 
 // Multer and CORS rejections must not leak a stack trace to a customer.

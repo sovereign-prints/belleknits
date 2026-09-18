@@ -5,6 +5,15 @@ services:
   # Plain HTML/CSS/JS served from Render's CDN. It holds no secrets and talks
   # to the web service below over HTTPS. It stays up even when that service
   # is asleep — backend-dependent data fails gracefully in the browser.
+  #
+  # Cold-start fix: build-static.sh fetches products/gallery/settings from
+  # the Web Service at BUILD time and ships them as static JSON in
+  # dist/data/*.json. Browsing is served from that snapshot, not a live API
+  # call, so a sleeping free-tier backend never delays a visitor's first
+  # page load. Admin edits publish to customers via the "Website" tab in the
+  # admin panel, which triggers a rebuild (see SERVICE 2's
+  # RENDER_STATIC_DEPLOY_HOOK). Get this service's own Deploy Hook URL from
+  # Render dashboard -> this Static Site -> Settings -> Deploy Hook.
   # ---------------------------------------------------------------------------
   - type: web
     runtime: static
@@ -14,7 +23,8 @@ services:
     autoDeploy: true
     envVars:
       # The web service's URL. Rewritten into config.js at build time, e.g.
-      # https://belleknits-api.onrender.com
+      # https://belleknits-api.onrender.com. Also used by build-static.sh to
+      # fetch the data snapshot.
       - key: API_HOST
         sync: false
     routes:
@@ -66,4 +76,12 @@ services:
       # https://belleknits.onrender.com,https://www.belleknits.co.za
       # Never a wildcard.
       - key: STATIC_SITE_ORIGINS
+        sync: false
+
+      # Deploy hook for SERVICE 1 (the static site). Lets the admin panel's
+      # "Update website now" button trigger a rebuild, which refreshes the
+      # dist/data/*.json snapshot with current product/gallery/settings data.
+      # Get it from Render dashboard -> the Static Site -> Settings ->
+      # Deploy Hook. Secret — backend only, sync:false keeps it out of git.
+      - key: RENDER_STATIC_DEPLOY_HOOK
         sync: false
