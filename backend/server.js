@@ -40,6 +40,15 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const isProduction = process.env.NODE_ENV === 'production';
 
+// Render (and most PaaS hosts) put this service behind a proxy that
+// terminates TLS and forwards over plain HTTP, setting X-Forwarded-Proto.
+// Express ignores that header by default, so req.protocol would report
+// 'http' even for a real https:// request — which breaks any same-origin
+// check built from req.protocol + req.get('host') (see the CORS logic
+// below). Trusting the first proxy hop fixes req.protocol, req.secure,
+// and req.ip/req.ips to reflect the real client-facing request.
+app.set('trust proxy', 1);
+
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const JWT_SECRET = process.env.ADMIN_JWT_SECRET;
 const SESSION_COOKIE = 'admin_session';
