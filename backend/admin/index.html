@@ -296,18 +296,33 @@ async function loadProducts() {
   const rows = await api('/admin/products');
   const STOCK = ['in-stock','low','made-to-order','out-of-stock'];
   $('#products-table').innerHTML =
-    `<thead><tr><th>Image</th><th>Name</th><th>Category</th><th class="num">Price</th><th>Stock</th><th>Live</th><th></th></tr></thead><tbody>` +
+    `<thead><tr><th>Image</th><th>Name</th><th>Slug</th><th>Category</th><th class="num">Price</th>
+      <th>Unit</th><th>Weight</th><th>Fibre</th><th>Metreage</th><th>Colour</th><th>Stock</th>
+      <th>Description</th><th>Live</th><th></th></tr></thead><tbody>` +
     rows.map(p => `<tr>
       <td>
         ${p.image ? `<img src="${esc(p.image)}" alt="" style="width:56px;height:56px;object-fit:cover;border-radius:3px;display:block;margin-bottom:6px">` : '<span class="hint" style="display:block;margin-bottom:6px">none</span>'}
         <input type="file" accept="image/*" data-pimage="${p.id}" style="font-size:.75rem;width:120px">
       </td>
-      <td>${esc(p.name)}<br><span class="hint">${esc(p.slug)}</span></td>
-      <td>${esc(p.category)}</td>
-      <td class="num"><input style="width:90px" type="number" min="0" step="1" value="${Number(p.price)}" data-price="${p.id}"></td>
-      <td><select data-stock="${p.id}">${STOCK.map(s =>
+      <td><input style="width:140px" value="${esc(p.name)}" data-f="name" data-id="${p.id}"></td>
+      <td><input style="width:140px" value="${esc(p.slug)}" data-f="slug" data-id="${p.id}"></td>
+      <td>
+        <select data-f="category" data-id="${p.id}">
+          <option value="wool"${p.category === 'wool' ? ' selected' : ''}>Wool &amp; yarn</option>
+          <option value="equipment"${p.category === 'equipment' ? ' selected' : ''}>Equipment</option>
+          <option value="finished"${p.category === 'finished' ? ' selected' : ''}>Finished piece</option>
+        </select>
+      </td>
+      <td class="num"><input style="width:80px" type="number" min="0" step="1" value="${Number(p.price)}" data-f="price" data-id="${p.id}"></td>
+      <td><input style="width:100px" value="${esc(p.unit || '')}" placeholder="100g ball" data-f="unit" data-id="${p.id}"></td>
+      <td><input style="width:100px" value="${esc(p.weight || '')}" placeholder="DK / 8 ply" data-f="weight" data-id="${p.id}"></td>
+      <td><input style="width:120px" value="${esc(p.fibre || '')}" placeholder="100% merino wool" data-f="fibre" data-id="${p.id}"></td>
+      <td><input style="width:80px" value="${esc(p.metreage || '')}" placeholder="225 m" data-f="metreage" data-id="${p.id}"></td>
+      <td><input style="width:100px" value="${esc(p.colour || '')}" data-f="colour" data-id="${p.id}"></td>
+      <td><select data-f="stock" data-id="${p.id}">${STOCK.map(s =>
         `<option value="${s}"${s === p.stock ? ' selected' : ''}>${s}</option>`).join('')}</select></td>
-      <td><input type="checkbox" data-active="${p.id}"${p.active ? ' checked' : ''}></td>
+      <td><textarea style="width:160px;min-height:40px" data-f="blurb" data-id="${p.id}">${esc(p.blurb || '')}</textarea></td>
+      <td><input type="checkbox" data-f="active" data-id="${p.id}"${p.active ? ' checked' : ''}></td>
       <td><button class="ghost danger" data-remove="${p.id}">Remove</button></td>
     </tr>`).join('') + '</tbody>';
 
@@ -315,12 +330,15 @@ async function loadProducts() {
     try { await api('/admin/products/' + id, { method: 'PATCH', body: JSON.stringify(body) }); notify(note); }
     catch (e) { notify(e.message, false); }
   };
-  document.querySelectorAll('[data-price]').forEach(i =>
-    i.addEventListener('change', () => patch(i.dataset.price, { price: Number(i.value) }, 'Price saved')));
-  document.querySelectorAll('[data-stock]').forEach(s =>
-    s.addEventListener('change', () => patch(s.dataset.stock, { stock: s.value }, 'Stock updated')));
-  document.querySelectorAll('[data-active]').forEach(c =>
-    c.addEventListener('change', () => patch(c.dataset.active, { active: c.checked }, c.checked ? 'Product is live' : 'Product hidden')));
+  document.querySelectorAll('#products-table [data-f]').forEach(el => el.addEventListener('change', () => {
+    const id = el.dataset.id;
+    const field = el.dataset.f;
+    let value;
+    if (field === 'active') value = el.checked;
+    else if (field === 'price') value = Number(el.value);
+    else value = el.value;
+    patch(id, { [field]: value }, field === 'active' ? (value ? 'Product is live' : 'Product hidden') : 'Saved');
+  }));
   document.querySelectorAll('[data-remove]').forEach(b => b.addEventListener('click', async () => {
     try { await api('/admin/products/' + b.dataset.remove, { method: 'DELETE' }); notify('Product removed'); loadProducts(); }
     catch (e) { notify(e.message, false); }
@@ -376,14 +394,21 @@ async function loadGallery() {
         ${g.image ? `<img src="${esc(g.image)}" alt="" style="width:56px;height:56px;object-fit:cover;border-radius:3px;display:block;margin-bottom:6px">` : '<span class="hint" style="display:block;margin-bottom:6px">none</span>'}
         <input type="file" accept="image/*" data-gimage="${g.id}" style="font-size:.75rem;width:120px">
       </td>
-      <td>${esc(g.title)}</td><td>${esc(g.note || '')}</td>
-      <td><input type="checkbox" data-gactive="${g.id}"${g.active ? ' checked' : ''}></td>
+      <td><input style="width:150px" value="${esc(g.title)}" data-gf="title" data-id="${g.id}"></td>
+      <td><input style="width:150px" value="${esc(g.note || '')}" placeholder="Commission, 2025" data-gf="note" data-id="${g.id}"></td>
+      <td><input type="checkbox" data-gf="active" data-id="${g.id}"${g.active ? ' checked' : ''}></td>
       <td><button class="ghost danger" data-gremove="${g.id}">Delete</button></td>
     </tr>`).join('') + '</tbody>';
 
-  document.querySelectorAll('[data-gactive]').forEach(c => c.addEventListener('change', async () => {
-    try { await api('/admin/gallery/' + c.dataset.gactive, { method: 'PATCH', body: JSON.stringify({ active: c.checked }) });
-      notify('Gallery updated'); } catch (e) { notify(e.message, false); }
+  const gpatch = async (id, body, note) => {
+    try { await api('/admin/gallery/' + id, { method: 'PATCH', body: JSON.stringify(body) }); notify(note); }
+    catch (e) { notify(e.message, false); }
+  };
+  document.querySelectorAll('#gallery-table [data-gf]').forEach(el => el.addEventListener('change', () => {
+    const id = el.dataset.id;
+    const field = el.dataset.gf;
+    const value = field === 'active' ? el.checked : el.value;
+    gpatch(id, { [field]: value }, field === 'active' ? (value ? 'Gallery item is live' : 'Gallery item hidden') : 'Saved');
   }));
   document.querySelectorAll('[data-gremove]').forEach(b => b.addEventListener('click', async () => {
     try { await api('/admin/gallery/' + b.dataset.gremove, { method: 'DELETE' }); notify('Deleted'); loadGallery(); }
