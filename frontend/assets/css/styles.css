@@ -1,364 +1,254 @@
 /* ===============================================================
-   Belle Knits — shared stylesheet
-   Direction: CHARCOAL & BRASS
+   Overberg Wool Co. — shared stylesheet
 
-   MOBILE FIRST, and more than that: on a phone the home page is a
-   deck of full-screen panels. One swipe moves you one section, and
-   scroll-snap-stop keeps it from overshooting. Longer pages (the
-   shop, the gallery) scroll normally — snapping a list of eighteen
-   products would fight the customer rather than help them.
+   MOBILE FIRST. Base rules target a phone; media queries add
+   complexity upward for tablet and desktop. Most customers arrive
+   on a phone, so the phone layout is the real design and the
+   desktop layout is the adaptation.
 
-   The design commits to a single dark world. Every colour is
-   painted explicitly; nothing is left to inherit a light default.
+   Palette drawn from undyed wool: bone, oatmeal, heather, stone,
+   with a soft berry accent.
    =============================================================== */
 
 :root {
-  /* charcoal ground */
-  --ground:      #1d1a17;
-  --panel:       #262220;
-  --sunken:      #2f2a26;
-  --rule:        #413a34;
+  --bone:        #fdfbf8;
+  --paper:       #ffffff;
+  --oatmeal:     #f7f2ea;
+  --heather:     #e8e2d6;
+  --stone:       #c2b8a8;
+  --slate:       #7a7268;
+  --ink:         #423d37;
+  --berry:       #b97b83;
+  --berry-deep:  #9a5c65;
+  --sage:        #9caa92;
 
-  /* type */
-  --quiet:       #8e8377;   /* labels, captions */
-  --muted:       #c3b8ab;   /* body copy */
-  --ink:         #f2ebe1;   /* headings, emphasis */
-
-  /* brass */
-  --brass:       #b3874c;
-  --brass-lift:  #c79c5f;
-  --on-brass:    #1d1a17;
-
-  /* status */
-  --good:        #a9c39a;  --good-bg:    #26301f;
-  --warn:        #e0bd82;  --warn-bg:    #332a1d;
-  --special:     #bda8d1;  --special-bg: #2c2633;
-
-  --display: 'Prata', Georgia, 'Times New Roman', serif;
-  --sans:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --sans:  'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 
   --wrap: 1140px;
-  --gutter: 22px;
-  --radius: 2px;
+  --gutter: 20px;
+  --radius: 3px;
+  --shadow: 0 1px 3px rgba(46, 42, 38, .06), 0 8px 24px rgba(46, 42, 38, .05);
 
-  --header-h: 56px;
-  --bar-h: 62px;
+  --header-h: 60px;
+  --bar-h: 64px;          /* sticky mobile action bar */
   --safe-b: env(safe-area-inset-bottom, 0px);
-  --tap: 48px;
 
-  /* usable height of one panel: the screen, less the two fixed bars */
-  --panel-h: calc(100dvh - var(--header-h) - var(--bar-h) - var(--safe-b));
+  --tap: 48px;            /* minimum comfortable tap target */
 }
 
 *, *::before, *::after { box-sizing: border-box; }
 
 html {
-  -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
-  scroll-padding-top: var(--header-h);
+  -webkit-text-size-adjust: 100%;   /* stop iOS enlarging text in landscape */
 }
 
 body {
   margin: 0;
-  background: var(--ground);
-  color: var(--muted);
+  background: var(--bone);
+  color: var(--ink);
   font-family: var(--sans);
   font-size: 16px;
-  line-height: 1.6;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  overflow-x: hidden;               /* nothing may scroll sideways on a phone */
+  /* room for the sticky action bar so the footer is never hidden behind it */
   padding-bottom: calc(var(--bar-h) + var(--safe-b));
 }
 
 img { max-width: 100%; display: block; }
 
-a { color: var(--brass); text-decoration: none; }
-@media (hover: hover) { a:hover { color: var(--brass-lift); } }
+a { color: var(--berry); text-decoration: none; }
+a:hover { color: var(--berry-deep); text-decoration: underline; }
 
-h1, h2, h3, h4 {
-  font-family: var(--display);
-  font-weight: 400;
-  line-height: 1.16;
-  color: var(--ink);
-  margin: 0 0 .5em;
-  overflow-wrap: break-word;
-  text-wrap: balance;
+/* No sticky :hover states left behind on touch screens */
+@media (hover: none) {
+  a:hover { color: var(--berry); text-decoration: none; }
 }
 
-h1 { font-size: clamp(1.9rem, 8vw, 3.4rem); }
-h2 { font-size: clamp(1.5rem, 6.2vw, 2.3rem); }
-h3 { font-size: 1.08rem; line-height: 1.25; }
+h1, h2, h3, h4 {
+  font-family: var(--serif);
+  font-weight: 500;
+  line-height: 1.18;
+  letter-spacing: -.01em;
+  margin: 0 0 .5em;
+  overflow-wrap: break-word;
+}
 
-p { margin: 0 0 1em; }
+h1 { font-size: clamp(2rem, 8.5vw, 3.6rem); }
+h2 { font-size: clamp(1.6rem, 6.5vw, 2.5rem); }
+h3 { font-size: 1.2rem; }
+
+p { margin: 0 0 1.1em; }
 
 .wrap { width: 100%; max-width: var(--wrap); margin: 0 auto; padding: 0 var(--gutter); }
 
 .eyebrow {
-  font-family: var(--sans);
-  font-size: .66rem; font-weight: 600;
-  letter-spacing: .2em; text-transform: uppercase;
-  color: var(--brass);
-  margin-bottom: .9em;
+  font-size: .7rem;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--stone);
+  margin-bottom: .8em;
 }
 
-.lede { font-size: 1rem; color: var(--muted); max-width: 60ch; }
+.lede { font-size: 1.05rem; color: var(--slate); max-width: 62ch; }
 
-/* ===============================================================
-   SNAP DECK — one swipe, one section
-   Applied only to pages that opt in with class="deck" on <body>.
-   =============================================================== */
-
-body.deck { scroll-snap-type: y mandatory; }
-
-.panel {
-  min-height: var(--panel-h);
-  scroll-snap-align: start;
-  scroll-snap-stop: always;      /* never skip two panels in one flick */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 26px 0;
-  border-bottom: 1px solid var(--rule);
-  position: relative;
-}
-.panel:last-of-type { border-bottom: 0; }
-
-/* A small counter in the margin so you know where you are in the deck. */
-.panel-index {
-  position: absolute;
-  top: 12px; right: var(--gutter);
-  font-size: .62rem; font-weight: 600; letter-spacing: .16em;
-  color: var(--quiet);
-  font-variant-numeric: tabular-nums;
-}
-
-/* Hint that there is more below. Omitted on the last panel. */
-.panel-more {
-  position: absolute;
-  left: 0; right: 0; bottom: 8px;
-  text-align: center;
-  font-size: .95rem;
-  color: var(--quiet);
-  animation: nudge 2.4s ease-in-out infinite;
-  pointer-events: none;
-}
-@keyframes nudge {
-  0%, 100% { transform: translateY(0); opacity: .45; }
-  50%      { transform: translateY(4px); opacity: 1; }
-}
-
-/* Landscape and short screens: a full-height panel stops being a
-   sensible unit, so drop out of snapping rather than trapping
-   content off-screen. */
-@media (max-height: 620px) {
-  body.deck { scroll-snap-type: none; }
-  .panel { min-height: 0; padding: 34px 0; }
-  .panel-more { display: none; }
-}
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  .panel-more { animation: none; }
-  * { transition-duration: .01ms !important; }
-}
-
-/* ===============================================================
-   HEADER
-   =============================================================== */
+/* ---------------------------------------------------------------
+   HEADER — compact on a phone, with the two things a customer
+   actually needs always visible: the brand and the menu.
+   --------------------------------------------------------------- */
 
 .site-header {
   position: sticky; top: 0; z-index: 60;
-  background: rgba(29, 26, 23, .96);
+  background: rgba(250, 247, 242, .95);
   backdrop-filter: saturate(140%) blur(8px);
   -webkit-backdrop-filter: saturate(140%) blur(8px);
-  border-bottom: 1px solid var(--rule);
+  border-bottom: 1px solid var(--heather);
 }
 
 .site-header .wrap {
   position: relative;
   display: flex; align-items: center; justify-content: space-between;
-  gap: 14px; min-height: var(--header-h);
+  gap: 16px; min-height: var(--header-h);
 }
 
 .brand {
-  font-family: var(--display);
-  font-size: 1.24rem;
+  font-family: var(--serif);
+  font-size: 1.4rem;
   color: var(--ink);
-  line-height: 1.05;
+  letter-spacing: .02em;
+  white-space: nowrap;
+  line-height: 1.1;
   padding: 6px 0;
-  letter-spacing: .01em;
-  display: flex;
-  align-items: center;
-  gap: 10px;
 }
+.brand:hover { text-decoration: none; }
 .brand small {
   display: block;
   font-family: var(--sans);
-  font-size: .52rem; font-weight: 600;
-  letter-spacing: .24em; text-transform: uppercase;
-  color: var(--brass);
-  margin-top: 3px;
+  font-size: .55rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--stone);
+  margin-top: 1px;
 }
-.brand-mark {
-  width: 30px; height: 30px;
-  border-radius: 50%;
-  object-fit: cover;
-  opacity: .82;
-  mix-blend-mode: luminosity;
-  filter: sepia(.15) saturate(.9);
-  flex: none;
-}
-@media (hover: hover) { .brand:hover { color: var(--ink); } }
 
 .nav-toggle {
   display: flex; align-items: center; justify-content: center;
   width: var(--tap); height: var(--tap);
-  margin-right: -12px;
+  margin-right: -12px;                 /* pull to the edge, keep the tap area */
   background: none; border: 0; cursor: pointer;
-  color: var(--ink); font-size: 1.45rem; line-height: 1;
+  color: var(--ink); font-size: 1.5rem; line-height: 1;
   -webkit-tap-highlight-color: transparent;
 }
-/* Swap hamburger for a close icon while the menu is open, so there is
-   always a visible way out rather than relying only on tap-outside. */
-.nav-toggle .icon-close { display: none; }
-.nav-toggle[aria-expanded="true"] .icon-open { display: none; }
-.nav-toggle[aria-expanded="true"] .icon-close { display: inline; }
 
 .nav {
   display: none;
   position: absolute; top: var(--header-h); left: 0; right: 0;
   flex-direction: column; align-items: stretch;
-  background: var(--panel);
-  border-bottom: 1px solid var(--rule);
-  box-shadow: 0 16px 32px rgba(0, 0, 0, .45);
-  padding: 4px var(--gutter) 18px;
+  background: var(--bone);
+  border-bottom: 1px solid var(--heather);
+  box-shadow: 0 12px 24px rgba(46, 42, 38, .08);
+  padding: 4px var(--gutter) 20px;
 }
 .nav.is-open { display: flex; }
 
 .nav a {
   color: var(--ink);
-  font-size: 1.02rem; font-weight: 500;
-  padding: 15px 0;
-  border-bottom: 1px solid var(--rule);
+  font-size: 1.05rem;
+  font-weight: 500;
+  padding: 15px 0;                     /* generous touch rows */
+  border-bottom: 1px solid var(--heather);
 }
-.nav a.is-active { color: var(--brass); }
+.nav a.is-active { color: var(--berry); }
 .nav a.btn-primary {
-  color: var(--on-brass); text-align: center;
-  border-bottom: 0; margin-top: 16px; padding: 15px 24px;
+  color: #fff;
+  text-align: center;
+  border-bottom: 0;
+  margin-top: 16px;
+  padding: 15px 24px;
 }
 
-/* ===============================================================
-   BUTTONS
-   =============================================================== */
+/* ---------------------------------------------------------------
+   BUTTONS — full width by default on a phone, inline from tablet up
+   --------------------------------------------------------------- */
 
 .btn {
-  display: block; width: 100%; text-align: center;
+  display: block;
+  width: 100%;
+  text-align: center;
   font-family: var(--sans);
-  font-size: .98rem; font-weight: 600; letter-spacing: .01em;
+  font-size: 1rem; font-weight: 600; letter-spacing: .01em;
   min-height: var(--tap);
-  padding: 13px 24px;
+  padding: 14px 26px;
   border-radius: var(--radius);
   border: 1px solid transparent;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: background .15s ease, color .15s ease, border-color .15s ease;
 }
-.btn + .btn { margin-top: 9px; }
+.btn + .btn { margin-top: 10px; }
 
-.btn-primary { background: var(--brass); color: var(--on-brass); }
-.btn-primary:active { background: var(--brass-lift); }
-.btn-ghost { background: transparent; color: var(--ink); border-color: var(--rule); }
-.btn-ghost:active { background: var(--sunken); }
+.btn-primary { background: var(--berry); color: #fff; }
+.btn-primary:active { background: var(--berry-deep); }
+.btn-ghost { background: transparent; color: var(--ink); border-color: var(--stone); }
+.btn-ghost:active { background: var(--oatmeal); }
 
 @media (hover: hover) {
-  .btn-primary:hover { background: var(--brass-lift); color: var(--on-brass); }
-  .btn-ghost:hover { background: var(--sunken); border-color: var(--quiet); color: var(--ink); }
+  .btn-primary:hover { background: var(--berry-deep); color: #fff; text-decoration: none; }
+  .btn-ghost:hover { background: var(--oatmeal); color: var(--ink); text-decoration: none; }
 }
 
-/* ===============================================================
-   HERO PANEL
-   =============================================================== */
+/* ---------------------------------------------------------------
+   HERO
+   --------------------------------------------------------------- */
 
-.hero-grid { display: grid; gap: 18px; }
-.hero h1 { margin-bottom: .28em; }
-.hero .actions { margin-top: 18px; }
+.hero { padding: 36px 0 40px; border-bottom: 1px solid var(--heather); }
+.hero-grid { display: grid; gap: 28px; }
+.hero h1 { margin-bottom: .3em; }
+.hero .actions { display: block; margin-top: 24px; }
 
-/* On phones the hero panel is one full screen (--panel-h). A 5:4 image
-   plus heading plus lede plus two buttons can overflow that on shorter
-   devices, pushing the CTA below the fold before the user has scrolled
-   at all — so the hero image shrinks to a supporting band instead of
-   dominating the first screen. */
-@media (max-width: 899px) {
-  .hero .figure { aspect-ratio: 16 / 7; }
-}
-@media (max-width: 899px) and (max-height: 720px) {
-  .hero .figure { aspect-ratio: 16 / 6; }
-}
-
-.figure {
+.hero-figure {
+  order: -1;                            /* picture first on a phone */
+  aspect-ratio: 4 / 3;
   border-radius: var(--radius);
-  aspect-ratio: 5 / 4;
   background:
-    repeating-linear-gradient(135deg, rgba(255,255,255,.045) 0 14px, rgba(255,255,255,0) 14px 28px),
-    linear-gradient(150deg, #332e28, #5b4c3b);
-  display: flex; align-items: flex-end; padding: 14px;
-  border: 1px solid var(--rule);
+    repeating-linear-gradient(135deg, rgba(255,255,255,.5) 0 14px, rgba(255,255,255,0) 14px 28px),
+    linear-gradient(150deg, var(--oatmeal), var(--heather) 60%, var(--stone));
+  box-shadow: var(--shadow);
+  display: flex; align-items: flex-end; padding: 16px;
 }
-.figure span {
-  font-size: .62rem; font-weight: 600;
-  letter-spacing: .16em; text-transform: uppercase;
-  color: var(--muted);
-  background: rgba(29, 26, 23, .82);
-  padding: 6px 10px; border-radius: var(--radius);
+.hero-figure span {
+  font-size: .68rem; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--slate);
+  background: rgba(255,255,255,.8); padding: 6px 11px; border-radius: var(--radius);
 }
 
-/* ===============================================================
-   CATEGORY PANELS — one product family per screen
-   =============================================================== */
+/* ---------------------------------------------------------------
+   SECTIONS
+   --------------------------------------------------------------- */
 
-.cat-figure {
-  border-radius: var(--radius);
-  aspect-ratio: 16 / 10;
-  border: 1px solid var(--rule);
-  margin-bottom: 18px;
-}
-.cat-figure[data-cat="wool"]      { background: linear-gradient(150deg, #332e28, #5b4c3b); }
-.cat-figure[data-cat="equipment"] { background: linear-gradient(150deg, #333029, #5c5548); }
-.cat-figure[data-cat="finished"]  { background: linear-gradient(150deg, #463434, #6e4f4c); }
+.section { padding: 44px 0; }
+.section + .section { border-top: 1px solid var(--heather); }
+.section-head { max-width: 62ch; margin-bottom: 28px; }
 
-.cat-list {
-  list-style: none; margin: 0 0 18px; padding: 0;
-  border-top: 1px solid var(--rule);
-}
-.cat-list li {
-  display: flex; justify-content: space-between; gap: 14px;
-  padding: 9px 0;
-  border-bottom: 1px solid var(--rule);
-  font-size: .9rem;
-}
-.cat-list b { font-weight: 500; color: var(--ink); }
-.cat-list span { color: var(--brass); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.page-head { padding: 32px 0 28px; border-bottom: 1px solid var(--heather); }
 
-/* ===============================================================
-   FILTERS
-   =============================================================== */
-
-.filters-wrap { position: relative; margin: 0 calc(var(--gutter) * -1) 20px; }
-/* Edge fades hint that the pill row scrolls further, since the
-   scrollbar itself is hidden. Faded out once everything fits
-   (desktop, where .filters wraps instead of scrolling). */
-.filters-wrap::before, .filters-wrap::after {
-  content: ''; position: absolute; top: 0; bottom: 10px; width: 28px;
-  pointer-events: none; z-index: 1;
-}
-.filters-wrap::before { left: 0; background: linear-gradient(90deg, var(--ground), transparent); }
-.filters-wrap::after  { right: 0; background: linear-gradient(270deg, var(--ground), transparent); }
+/* ---------------------------------------------------------------
+   FILTERS — a single swipeable row on a phone, never a wrapped
+   block that pushes the products off the first screen.
+   --------------------------------------------------------------- */
 
 .filters {
-  display: flex; gap: 8px;
-  margin: 0;
+  display: flex;
+  gap: 8px;
+  margin: 0 calc(var(--gutter) * -1) 24px;
   padding: 2px var(--gutter) 10px;
   overflow-x: auto;
   scroll-snap-type: x proximity;
+  /* snapping ignores padding by default, which pulls the first chip
+     flush against the screen edge on load */
   scroll-padding-left: var(--gutter);
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -366,207 +256,241 @@ body.deck { scroll-snap-type: y mandatory; }
 .filters::-webkit-scrollbar { display: none; }
 
 .filter {
-  flex: 0 0 auto; white-space: nowrap; cursor: pointer;
+  flex: 0 0 auto;
   scroll-snap-align: start;
   background: transparent;
-  border: 1px solid var(--rule);
-  color: var(--muted);
-  font-family: var(--sans); font-size: .85rem; font-weight: 500;
-  padding: 9px 17px; border-radius: 999px;
+  border: 1px solid var(--heather);
+  padding: 10px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: var(--sans); font-size: .88rem; font-weight: 500;
+  color: var(--slate);
+  white-space: nowrap;
   -webkit-tap-highlight-color: transparent;
   transition: background .15s ease, border-color .15s ease, color .15s ease;
 }
-.filter.is-active { background: var(--brass); border-color: var(--brass); color: var(--on-brass); }
+.filter.is-active { background: var(--ink); border-color: var(--ink); color: var(--bone); }
 
-/* ===============================================================
-   PRODUCT AND GALLERY GRIDS
-   =============================================================== */
+/* ---------------------------------------------------------------
+   PRODUCT GRID — two columns on a phone. One column would make an
+   18-item catalogue an endless scroll; two lets a customer scan.
+   --------------------------------------------------------------- */
 
-.grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.grid { display: grid; gap: 14px; grid-template-columns: repeat(2, 1fr); }
 
 .card {
-  background: var(--panel);
-  border: 1px solid var(--rule);
+  background: var(--paper);
+  border: 1px solid var(--heather);
   border-radius: var(--radius);
   overflow: hidden;
   display: flex; flex-direction: column;
 }
 
-.card-figure { aspect-ratio: 1 / 1; background: linear-gradient(150deg, #332e28, #5b4c3b); position: relative; overflow: hidden; }
-.card-figure::after {
-  content: ''; position: absolute; inset: 0;
-  background: repeating-linear-gradient(45deg, rgba(255,255,255,.05) 0 8px, rgba(255,255,255,0) 8px 16px);
+.card-figure {
+  aspect-ratio: 1 / 1;
+  background: linear-gradient(150deg, var(--oatmeal), var(--heather));
+  position: relative;
 }
-.card-figure[data-cat="equipment"] { background: linear-gradient(150deg, #333029, #5c5548); }
-.card-figure[data-cat="finished"]  { background: linear-gradient(150deg, #463434, #6e4f4c); }
-.card-figure img { width: 100%; height: 100%; object-fit: cover; display: block; position: relative; z-index: 1; }
-.card-figure.has-photo::after { display: none; }
+.card-figure::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(45deg, rgba(255,255,255,.35) 0 8px, rgba(255,255,255,0) 8px 16px);
+}
+.card-figure[data-cat="equipment"] { background: linear-gradient(150deg, #f1ede4, var(--stone)); }
+.card-figure[data-cat="finished"]  { background: linear-gradient(150deg, #f6ecea, #ddc5c7); }
 
-.card-body { padding: 11px 11px 13px; display: flex; flex-direction: column; flex: 1; }
-.card-body h3 { font-size: .95rem; margin-bottom: .3em; }
+.card-body { padding: 13px 13px 15px; display: flex; flex-direction: column; flex: 1; }
+.card-body h3 { font-size: 1rem; line-height: 1.25; margin-bottom: .25em; }
 .card-meta {
-  font-size: .62rem; letter-spacing: .07em; text-transform: uppercase;
-  color: var(--quiet); margin-bottom: 7px; line-height: 1.4;
+  font-size: .66rem; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--stone); margin-bottom: 8px; line-height: 1.4;
 }
 .card-blurb {
-  font-size: .78rem; color: var(--muted); margin-bottom: 10px; line-height: 1.45;
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  font-size: .82rem; color: var(--slate); margin-bottom: 12px; line-height: 1.5;
+  /* keep phone cards even in height — the full copy lives on the product page */
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+  overflow: hidden;
 }
-.card-foot { margin-top: auto; display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px 8px; }
-.price { font-family: var(--display); font-size: 1.05rem; color: var(--ink); font-variant-numeric: tabular-nums; }
-.price small { display: block; font-family: var(--sans); font-size: .6rem; color: var(--quiet); line-height: 1.4; }
+.card-foot { margin-top: auto; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; }
+.price { font-family: var(--serif); font-size: 1.2rem; color: var(--ink); }
+.price small { font-family: var(--sans); font-size: .66rem; color: var(--stone); display: block; line-height: 1.4; }
 
 .tag {
-  font-size: .58rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
-  padding: 3px 7px; border-radius: 999px; white-space: nowrap;
+  font-size: .62rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 999px; white-space: nowrap;
 }
-.tag-in-stock      { background: var(--good-bg);    color: var(--good); }
-.tag-low           { background: var(--warn-bg);    color: var(--warn); }
-.tag-made-to-order { background: var(--special-bg); color: var(--special); }
-.tag-out-of-stock  { background: var(--sunken);     color: var(--quiet); }
+.tag-in-stock      { background: #edf1ea; color: var(--sage); }
+.tag-low           { background: #fbf0e6; color: #a3671f; }
+.tag-made-to-order { background: #f3eff5; color: #6b5580; }
 
-.gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-.gallery-item {
-  background: var(--panel); border: 1px solid var(--rule);
-  border-radius: var(--radius); overflow: hidden; margin: 0;
+/* Cards that are really a link to another page (home page "what we do") */
+.card .btn { margin-top: 4px; }
+
+/* ---------------------------------------------------------------
+   GALLERY — two up on a phone
+   --------------------------------------------------------------- */
+
+.gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.gallery-item { border-radius: var(--radius); overflow: hidden; background: var(--paper); border: 1px solid var(--heather); }
+.gallery-figure {
+  aspect-ratio: 3 / 4;
+  background: linear-gradient(160deg, var(--oatmeal), var(--heather) 55%, var(--stone));
 }
-.gallery-figure { aspect-ratio: 3 / 4; background: linear-gradient(160deg, #332e28, #5b4c3b); }
-.gallery-item:nth-child(3n+2) .gallery-figure { background: linear-gradient(160deg, #463434, #6e4f4c); }
-.gallery-item:nth-child(3n+3) .gallery-figure { background: linear-gradient(160deg, #333d33, #4e5e4b); }
-.gallery-figure img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.gallery-cap { padding: 9px 11px 11px; }
-.gallery-cap strong { display: block; font-family: var(--display); font-weight: 400; font-size: .92rem; line-height: 1.25; color: var(--ink); }
-.gallery-cap span { font-size: .7rem; color: var(--quiet); }
+.gallery-item:nth-child(3n+2) .gallery-figure { background: linear-gradient(160deg, #f6eeee, #ddc0c3); }
+.gallery-item:nth-child(3n+3) .gallery-figure { background: linear-gradient(160deg, #f0f2ec, #b6c1ac); }
+.gallery-cap { padding: 11px 12px 13px; }
+.gallery-cap strong { display: block; font-family: var(--serif); font-size: 1rem; font-weight: 500; line-height: 1.25; }
+.gallery-cap span { font-size: .74rem; color: var(--stone); }
 
-/* ===============================================================
-   SECTIONS ON NON-DECK PAGES
-   =============================================================== */
-
-.section { padding: 40px 0; }
-.section + .section { border-top: 1px solid var(--rule); }
-.section-head { max-width: 60ch; margin-bottom: 24px; }
-.page-head { padding: 30px 0 26px; border-bottom: 1px solid var(--rule); }
-
-/* ===============================================================
+/* ---------------------------------------------------------------
    FORMS
-   16px inputs on purpose: anything smaller makes iOS Safari zoom
-   the page when a field is focused.
-   =============================================================== */
+   Inputs are 16px on purpose: anything smaller makes iOS Safari
+   zoom the page when the field is focused, which on a quote form
+   feels broken.
+   --------------------------------------------------------------- */
 
 .form-panel {
-  background: var(--panel);
-  border: 1px solid var(--rule);
+  background: var(--paper);
+  border: 1px solid var(--heather);
   border-radius: var(--radius);
   padding: 20px 16px 24px;
+  box-shadow: var(--shadow);
 }
 
-.field { margin-bottom: 17px; }
-.field label { display: block; font-size: .82rem; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
-.field .hint { font-size: .78rem; color: var(--quiet); font-weight: 400; }
+.field { margin-bottom: 18px; }
+.field label { display: block; font-size: .85rem; font-weight: 600; letter-spacing: .03em; margin-bottom: 7px; color: var(--slate); }
+.field .hint { font-size: .8rem; color: var(--stone); font-weight: 400; letter-spacing: 0; }
 
 input[type=text], input[type=email], input[type=tel], select, textarea {
   width: 100%;
-  font-family: var(--sans); font-size: 16px;
+  font-family: var(--sans);
+  font-size: 16px;                     /* do not lower — see note above */
   color: var(--ink);
-  background: #1a1714;
-  border: 1px solid var(--rule);
+  background: var(--bone);
+  border: 1px solid var(--heather);
   border-radius: var(--radius);
   min-height: var(--tap);
-  padding: 11px 13px;
+  padding: 12px 14px;
   transition: border-color .15s ease, box-shadow .15s ease;
 }
-input::placeholder, textarea::placeholder { color: #6f6559; }
 select {
-  appearance: none; -webkit-appearance: none; padding-right: 38px;
-  background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%),
-                    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
-  background-position: calc(100% - 19px) 50%, calc(100% - 14px) 50%;
-  background-size: 5px 5px, 5px 5px; background-repeat: no-repeat;
+  appearance: none; -webkit-appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--slate) 50%),
+                    linear-gradient(135deg, var(--slate) 50%, transparent 50%);
+  background-position: calc(100% - 20px) 50%, calc(100% - 15px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 40px;
 }
 input:focus, select:focus, textarea:focus {
-  outline: none; border-color: var(--brass);
-  box-shadow: 0 0 0 3px rgba(179, 135, 76, .18);
+  outline: none; border-color: var(--berry);
+  box-shadow: 0 0 0 3px rgba(140, 74, 82, .12);
+  background: var(--paper);
 }
-textarea { min-height: 115px; resize: vertical; }
+textarea { min-height: 120px; resize: vertical; line-height: 1.55; }
 
-.field-row { display: grid; grid-template-columns: 1fr; }
-.form-note { font-size: .8rem; color: var(--quiet); margin: 10px 0 0; }
+.field-row { display: grid; grid-template-columns: 1fr; gap: 0; }
+.field-row .field { margin-bottom: 18px; }
 
-/* ===============================================================
-   NOTICES — the graceful-failure surface
-   =============================================================== */
+.form-note { font-size: .82rem; color: var(--stone); margin-top: 12px; margin-bottom: 0; }
+
+/* ---------------------------------------------------------------
+   STATUS MESSAGES — the graceful-failure surface
+   --------------------------------------------------------------- */
 
 .notice {
   border-radius: var(--radius);
-  padding: 13px 15px; font-size: .88rem;
-  margin-bottom: 18px; border: 1px solid;
+  padding: 14px 16px;
+  font-size: .9rem;
+  margin-bottom: 20px;
+  border: 1px solid;
 }
-.notice-info    { background: var(--sunken);  border-color: var(--rule); color: var(--muted); }
-.notice-warn    { background: var(--warn-bg); border-color: #4d3f28;     color: var(--warn); }
-.notice-success { background: var(--good-bg); border-color: #3b4a31;     color: var(--good); }
-.notice a { font-weight: 600; color: var(--brass); }
+.notice-info    { background: var(--oatmeal); border-color: var(--heather); color: var(--slate); }
+.notice-warn    { background: #fdf6ec; border-color: #ecdcc2; color: #8a6220; }
+.notice-success { background: #eef3ec; border-color: #d3e0cd; color: #4a6041; }
+.notice a { font-weight: 600; }
 
-.skeleton-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.skeleton-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
 .skeleton {
-  height: 210px; border-radius: var(--radius);
-  background: linear-gradient(90deg, #2a2622 25%, #342f2a 50%, #2a2622 75%);
+  height: 230px; border-radius: var(--radius);
+  background: linear-gradient(90deg, var(--oatmeal) 25%, #f6f2eb 50%, var(--oatmeal) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite linear;
 }
 @keyframes shimmer { to { background-position: -200% 0; } }
-@media (prefers-reduced-motion: reduce) { .skeleton { animation: none; } }
 
-/* ===============================================================
-   STICKY ACTION BAR
-   =============================================================== */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .skeleton { animation: none; }
+  * { transition-duration: .01ms !important; }
+}
+
+/* ---------------------------------------------------------------
+   STICKY MOBILE ACTION BAR
+   Injected by main.js. On a phone the nav is behind a hamburger,
+   so the two actions that make money — browse and enquire — get a
+   permanent home at thumb height instead.
+   --------------------------------------------------------------- */
 
 .action-bar {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 70;
-  display: flex; gap: 8px;
-  background: rgba(29, 26, 23, .97);
+  display: flex;
+  background: rgba(250, 247, 242, .97);
   backdrop-filter: saturate(140%) blur(8px);
   -webkit-backdrop-filter: saturate(140%) blur(8px);
-  border-top: 1px solid var(--rule);
+  border-top: 1px solid var(--heather);
   padding: 8px var(--gutter) calc(8px + var(--safe-b));
+  gap: 8px;
+  box-shadow: 0 -4px 16px rgba(46, 42, 38, .06);
 }
-.action-bar .btn { margin: 0; font-size: .88rem; padding: 11px 12px; min-height: 42px; }
-.action-bar .btn + .btn { margin-top: 0; }
+.action-bar .btn { margin: 0; font-size: .92rem; padding: 12px 14px; min-height: 44px; }
+.action-bar .btn + .btn { margin-top: 0; margin-left: 0; }
 .action-bar .btn-wa {
-  display: none;
+  flex: 0 0 auto;
+  width: 54px;
+  padding: 12px 0;
+  background: var(--oatmeal);
+  border-color: var(--heather);
+  color: var(--ink);
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  display: flex; align-items: center; justify-content: center;
 }
 
-body.no-action-bar { padding-bottom: 0; --bar-h: 0px; }
+/* ---------------------------------------------------------------
+   TWO-COLUMN LAYOUT (form + sidebar, article + sidebar)
+   Stacked on a phone; the sidebar follows the main content.
+   --------------------------------------------------------------- */
 
-/* ===============================================================
-   LAYOUT WITH SIDEBAR / PROSE
-   =============================================================== */
+.layout-aside { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: start; }
 
-.layout-aside { display: grid; grid-template-columns: 1fr; gap: 22px; align-items: start; }
-.prose { max-width: 64ch; }
+.prose { max-width: 68ch; }
 .prose h3 { margin-top: 1.7em; }
-.prose ul { padding-left: 1.1em; color: var(--muted); }
-.prose li { margin-bottom: .45em; }
+.prose ul { padding-left: 1.15em; color: var(--slate); }
+.prose li { margin-bottom: .5em; }
 
-/* ===============================================================
+/* ---------------------------------------------------------------
    FOOTER
-   =============================================================== */
+   --------------------------------------------------------------- */
 
 .site-footer {
-  background: #141210; color: var(--quiet);
-  padding: 34px 0 22px; border-top: 1px solid var(--rule);
+  background: var(--oatmeal); color: var(--slate);
+  padding: 40px 0 24px; margin-top: 16px;
+  border-top: 1px solid var(--heather);
 }
-.site-footer a { color: var(--muted); }
-@media (hover: hover) { .site-footer a:hover { color: var(--brass); } }
-.footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+.site-footer a { color: var(--slate); }
+.site-footer a:active { color: var(--berry-deep); }
+.footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-bottom: 28px; }
 .footer-grid > :first-child { grid-column: 1 / -1; }
-.footer-grid h4 { font-family: var(--display); color: var(--ink); font-size: .96rem; margin-bottom: .8em; }
+.footer-grid h4 { color: var(--ink); font-size: .95rem; margin-bottom: .8em; }
 .footer-grid ul { list-style: none; margin: 0; padding: 0; }
-.footer-grid li { font-size: .87rem; margin-bottom: 3px; }
-.footer-grid li a { display: inline-block; padding: 5px 0; }
-.footer-brand { font-family: var(--display); font-size: 1.35rem; color: var(--ink); margin-bottom: .35em; }
+.footer-grid li { margin-bottom: 4px; font-size: .9rem; }
+.footer-grid li a { display: inline-block; padding: 6px 0; }
+.footer-brand { font-family: var(--serif); font-size: 1.5rem; color: var(--ink); margin-bottom: .3em; }
 .footer-bottom {
-  border-top: 1px solid var(--rule); padding-top: 16px;
-  font-size: .77rem; color: var(--quiet);
+  border-top: 1px solid var(--heather);
+  padding-top: 18px; font-size: .8rem; color: var(--stone);
   display: flex; flex-wrap: wrap; gap: 6px; justify-content: space-between;
 }
 
@@ -575,83 +499,116 @@ body.no-action-bar { padding-bottom: 0; --bar-h: 0px; }
    =============================================================== */
 
 @media (min-width: 640px) {
-  :root { --gutter: 30px; }
+  :root { --gutter: 28px; }
 
   .btn { display: inline-block; width: auto; }
   .btn + .btn { margin-top: 0; margin-left: 10px; }
 
-  .grid, .gallery-grid, .skeleton-grid { grid-template-columns: repeat(3, 1fr); gap: 18px; }
-  .card-body { padding: 16px; }
-  .card-body h3 { font-size: 1.05rem; }
-  .card-blurb { font-size: .85rem; -webkit-line-clamp: 3; }
+  .hero { padding: 56px 0 52px; }
+  .hero .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+  .hero .actions .btn + .btn { margin-left: 0; }
 
-  .field-row { grid-template-columns: 1fr 1fr; gap: 0 18px; }
-  .form-panel { padding: 30px; }
+  .section { padding: 60px 0; }
+  .page-head { padding: 48px 0 36px; }
 
-  .section { padding: 56px 0; }
-  .page-head { padding: 46px 0 34px; }
+  .grid, .skeleton-grid { gap: 20px; }
+  .gallery-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
 
-  .footer-grid { grid-template-columns: 2fr 1fr 1fr; gap: 36px; }
+  .card-body { padding: 18px; }
+  .card-body h3 { font-size: 1.1rem; }
+  .card-blurb { font-size: .88rem; -webkit-line-clamp: 4; }
+
+  .field-row { grid-template-columns: 1fr 1fr; gap: 0 20px; }
+  .form-panel { padding: 32px; }
+
+  .footer-grid { grid-template-columns: 2fr 1fr 1fr; gap: 40px; }
   .footer-grid > :first-child { grid-column: auto; }
 }
 
 /* ===============================================================
    DESKTOP — 900px and up
-   The snap deck is a phone idea. On a desktop it fights the mouse
-   wheel, so it is switched off and the panels become ordinary
-   sections.
+   Full nav appears, the action bar retires, layouts go wide.
    =============================================================== */
 
 @media (min-width: 900px) {
-  :root { --gutter: 26px; --header-h: 74px; }
+  :root { --gutter: 24px; --header-h: 76px; }
 
   body { padding-bottom: 0; }
-  body.deck { scroll-snap-type: none; }
-  .panel {
-    min-height: 0;
-    scroll-snap-align: none;
-    padding: 74px 0;
-    justify-content: flex-start;
-  }
-  .panel-more, .panel-index { display: none; }
   .action-bar { display: none; }
 
-  .brand { font-size: 1.55rem; }
-  .brand small { font-size: .58rem; }
+  .brand { font-size: 1.65rem; }
+  .brand small { font-size: .6rem; letter-spacing: .22em; }
+
   .nav-toggle { display: none; }
 
   .nav {
-    display: flex; position: static; flex-direction: row; align-items: center;
-    gap: 26px; background: none; border: 0; box-shadow: none; padding: 0;
+    display: flex; position: static;
+    flex-direction: row; align-items: center;
+    gap: 26px;
+    background: none; border: 0; box-shadow: none; padding: 0;
   }
   .nav a {
-    color: var(--muted); font-size: .87rem; padding: 4px 0;
+    color: var(--slate);
+    font-size: .88rem;
+    padding: 4px 0;
     border-bottom: 1px solid transparent;
   }
-  .nav a:hover, .nav a.is-active { color: var(--ink); border-bottom-color: var(--brass); }
-  .nav a.btn-primary {
-    color: var(--on-brass); margin-top: 0; padding: 10px 20px;
-    min-height: 0; font-size: .87rem; border-bottom-color: transparent;
+  .nav a:hover, .nav a.is-active {
+    color: var(--ink); text-decoration: none; border-bottom-color: var(--berry);
   }
-  .nav a.btn-primary:hover { color: var(--on-brass); background: var(--brass-lift); border-bottom-color: transparent; }
+  .nav a.btn-primary {
+    color: #fff; margin-top: 0; padding: 10px 20px;
+    min-height: 0; font-size: .88rem; border-bottom-color: transparent;
+  }
+  .nav a.btn-primary:hover { color: #fff; background: var(--berry-deep); border-bottom-color: transparent; }
 
-  .hero-grid { grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center; }
-  .hero .figure { aspect-ratio: 4 / 3; }
+  .hero { padding: 88px 0 72px; }
+  .hero-grid { grid-template-columns: 1.05fr .95fr; gap: 64px; align-items: center; }
+  .hero-figure { order: 0; padding: 24px; }
 
-  .cat-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
-  .cat-figure { margin-bottom: 0; aspect-ratio: 4 / 3; }
+  .section { padding: 76px 0; }
+  .section-head { margin-bottom: 44px; }
+  .page-head { padding: 64px 0 40px; }
 
-  .lede { font-size: 1.08rem; }
-  .filters-wrap { margin: 0 0 30px; }
-  .filters-wrap::before, .filters-wrap::after { display: none; }
-  .filters { flex-wrap: wrap; overflow: visible; margin: 0; padding: 0; }
-  .grid, .gallery-grid, .skeleton-grid { gap: 24px; }
-  .card { transition: border-color .18s ease, transform .18s ease; }
-  .card:hover { border-color: var(--quiet); transform: translateY(-2px); }
+  .lede { font-size: 1.12rem; }
+
+  .filters {
+    flex-wrap: wrap; overflow: visible;
+    margin: 0 0 36px; padding: 0;
+  }
+
+  .grid, .skeleton-grid { grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .skeleton { height: 320px; }
+
+  .card { transition: box-shadow .18s ease, transform .18s ease; }
+  .card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
   .card-blurb { -webkit-line-clamp: unset; display: block; }
-  .layout-aside { grid-template-columns: 1.3fr .7fr; gap: 50px; }
-  .section { padding: 72px 0; }
-  .page-head { padding: 60px 0 38px; }
-  .site-footer { padding: 56px 0 30px; }
+
+  .layout-aside { grid-template-columns: 1.3fr .7fr; gap: 56px; }
+
+  .site-footer { padding: 60px 0 32px; }
+  .footer-grid { gap: 48px; margin-bottom: 44px; }
   .footer-grid li a { padding: 0; }
 }
+
+/* ---------------------------------------------------------------
+   FEATURE CARDS (home page "what we do")
+   One per row on a phone — these carry a button and a paragraph,
+   so two across would crush them. Three across from desktop.
+   --------------------------------------------------------------- */
+
+.grid-feature { grid-template-columns: 1fr; gap: 16px; }
+.grid-feature .card-figure { aspect-ratio: 16 / 9; }
+.grid-feature .card-blurb { -webkit-line-clamp: unset; display: block; }
+
+@media (min-width: 640px) {
+  .grid-feature { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .grid-feature .card-figure { aspect-ratio: 4 / 3; }
+}
+@media (min-width: 900px) {
+  .grid-feature { gap: 28px; }
+}
+
+/* pages that render no action bar reclaim the reserved space */
+body.no-action-bar { padding-bottom: 0; }
